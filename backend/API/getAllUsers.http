@@ -1,0 +1,11 @@
+POST http://localhost:4000
+Content-Type: application/json
+
+{
+  "packagename": "Premium Package",
+  "basicPrice": 499,
+  "tax": 18,
+  "categoryId": "67c6d17b37f1e76f78699756",
+  "status": true,
+  "discription": "This is a premium service package with additional benefits."
+}
