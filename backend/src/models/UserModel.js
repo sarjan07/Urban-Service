@@ -6,15 +6,15 @@ const UserSchema = new Schema({
         type:String,
         required: true,
     },
-    lastName:{
-        type:String,
-        required: true,
-    },
+    // lastName:{
+    //     type:String,
+    //     required: true,
+    // },
     status:{
         type:Boolean,
         default:true
     },
-    phoneNumber:{
+    phone:{
         type:Number,
         required: true,
     },

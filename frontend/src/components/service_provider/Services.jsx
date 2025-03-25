@@ -65,7 +65,7 @@ function Services() {
       };
 
       // Make API call to save service data
-      const response = await fetch('http://localhost:3000/api/services', {
+      const response = await fetch('http://localhost:4000/services', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

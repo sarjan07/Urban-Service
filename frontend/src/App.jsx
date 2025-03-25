@@ -28,8 +28,8 @@ import ManageServices from "./components/service_provider/ManageServices";
 import AddService from "./components/service_provider/AddService";
 
 // Import Payment Components
-// import Payments from './components/payments/Payments'
-// import PaymentHistory from './components/payments/PaymentHistory'
+import Payments from './components/payments/Payments'
+import PaymentHistory from './components/payments/PaymentHistory'
 //
 // Import Layout Components
 import Navbar from "./components/layouts/Navbar";
@@ -39,6 +39,7 @@ import NotFound from "./components/pages/NotFound";
 // Import Services
 import AuthService from "../src/components/services/AuthService";
 import emailService from "../src/components/services/EmailService";
+import { ResetPassword } from "./components/common/ResetPassword";
 
 // Import Route Protection
 // import PrivateRoute from './components/common/PrivateRoute'
@@ -153,28 +154,23 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
+                <Route path="/resetpassword/:token" element={<ResetPassword/>}></Route>
 
                 {/* Protected Service Provider Routes */}
                 <Route path="/service-provider">
-                  <Route
-                    path="services"
-                    element={
+                  <Route path="services" element={
                       // <PrivateRoute>
                       <Services />
                       //</PrivateRoute>
                     }
                   />
-                  <Route
-                    path="manage"
-                    element={
+                  <Route path="manage" element={
                       //<PrivateRoute>
                       <ManageServices />
                       //</PrivateRoute>
                     }
                   />
-                  <Route
-                    path="add"
-                    element={
+                  <Route path="add" element={
                       //<PrivateRoute>
                       <AddService />
                       //</PrivateRoute>
@@ -183,7 +179,7 @@ function App() {
                 </Route>
 
                 {/* Protected Payment Routes */}
-                {/* <Route path="/payments">
+                <Route path="/payments">
                     <Route 
                       index
                       element={
@@ -200,21 +196,17 @@ function App() {
                        // </PrivateRoute>
                       } 
                     />
-                  </Route> */}
+                  </Route>
 
                 {/* Protected User Routes */}
                 <Route path="/user">
-                  <Route
-                    path="profile"
-                    element={
+                  <Route path="profile" element={
                       // <PrivateRoute>
                       <Profile />
                       // </PrivateRoute>
                     }
                   />
-                  <Route
-                    path="settings"
-                    element={
+                  <Route path="settings" element={
                       // <PrivateRoute>
                       <Settings />
                       // </PrivateRoute>

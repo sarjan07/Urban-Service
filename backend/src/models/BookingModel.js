@@ -12,12 +12,12 @@ const BookingSchema = new Schema({
     //     required:true
     // },
     appoinmentDate:{
-        type: Date,
+        type: String,
         required: true,
         
     },
     appoinmentTime:{
-        type:Date,
+        type: String,
         required: true
     },
     tamount:{

@@ -91,6 +91,8 @@ function AddService() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [categories, setCategories] = useState([]);
+  const [ states, setStates] = useState([]);
+  const [ cities, setCities] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
   const [formData, setFormData] = useState({
     serviceName: "",
@@ -105,6 +107,25 @@ function AddService() {
     price: "",
     contactPhone: "",
   });
+
+  useEffect(() => {
+    getAllStates();
+  }, []);
+
+  const getAllStates = async () => {
+    const res = await axios.get("/state/getallstates");
+    setStates(res.data.data);
+  };
+
+  const getCityByStateId = async (id) => {
+    const res = await axios.get("/city/getcitybystate/" + id);
+    setCities(res.data.data);
+  };
+
+  const getAreaByCityId = async (id) => {
+    const res = await axios.get("/area/getareabycity/" + id);
+    setAreas(res.data.data);
+  };
 
   // Fetch categories on component mount
   useEffect(() => {
@@ -264,7 +285,7 @@ function AddService() {
         )}
 
         <Paper elevation={3} sx={{ p: 4 }}>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit(andler)}>
             <Grid container spacing={3}>
               <Grid item xs={12}>
                 <TextField

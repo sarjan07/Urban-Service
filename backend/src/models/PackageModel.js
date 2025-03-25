@@ -5,7 +5,7 @@ const PackageSchema = new Schema({
     packagename:{
         type: String,
         required: true,
-        unique: true
+        // unique: true
     },
     basicPrice:{
         type: Number,
@@ -15,9 +15,9 @@ const PackageSchema = new Schema({
         type: Number,
         required: true
     },
-    // commision:{
-    //     type: Number,
-    // },
+    commision:{
+        type: Number,
+    },
     categoryId:{
         type:Schema.Types.ObjectId,
         required: true,

@@ -7,12 +7,7 @@ const CartSchema = new Schema({
         required: true,
         ref:"users"
     },
-    // cartId:{
-    //     type:String,
-    //     required:true,
-    //     ref:"City",
-    // },
-    packageId:{
+     packageId:{
         type: Schema.Types.ObjectId,
         required: true,
         ref:"Package"

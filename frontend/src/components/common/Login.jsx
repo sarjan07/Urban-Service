@@ -183,6 +183,16 @@ function Login() {
               )}
             />
 
+            <div className="remember-forgot">
+              <div className="remember-me">
+                <input type="checkbox" id="remember" />
+                <label htmlFor="remember">Remember Me</label>
+              </div>
+              <a href="#" className="forgot-password">
+                Forgot Password?
+              </a>
+            </div>
+
             {/* Submit Button */}
             <Button
               type="submit"

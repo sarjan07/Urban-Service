@@ -35,6 +35,12 @@ function Navbar() {
   const [anchorElUser, setAnchorElUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
+  const [role, setRole] = useState("");
+
+    const handleChange = (event) => {
+        setRole(event.target.value);
+        console.log("Selected Role:", event.target.value);
+    };
 
   useEffect(() => {
     const checkAuth = () => {

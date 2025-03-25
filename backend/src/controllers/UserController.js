@@ -2,6 +2,8 @@ const User = require("../models/UserModel")
 const bcrypt = require("bcrypt");
 const Role = require("../models/RoleModel")
 const mailUtil = require("../utili/MailUtil")
+const jwt = require("jsonwebtoken")
+const secret = "your sceret key"
 
 const loginUser =async(req,res) =>{
     const email = req.body.email;
@@ -94,16 +96,67 @@ const deleteUser = async(req,res) =>{
 };
 
 const getUserById = async(req,res) =>{
-    const foundUser = await User.create(req.params.id)
+    // const foundUser = await User.create(req.params.id)
 
-    res.json({
-        message:"user fetched...",
-        data:foundUser
+    // res.json({
+    //     message:"user fetched...",
+    //     data:foundUser
 
 
 
-    });
+    // });
+    try {
+        const user = await User.findById(req.params.id); 
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
+        res.json(user);
+    } catch (error) {
+        console.error("Error fetching user:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
 };
+
+const forgotPassword = async (req, res) => {
+    const email = req.body.email;
+    const foundUser = await User.findOne({ email: email });
+  
+    if (foundUser) {
+      const token = jwt.sign(foundUser.toObject(), secret);
+      console.log(token);
+      const url = `http://localhost:5173/resetpassword/${token}`;
+      const mailContent = `<html>
+                            <a href ="${url}">rest password</a>
+                            </html>`;
+      //email...
+      await mailUtil.sendingMail(foundUser.email, "reset password", mailContent);
+      res.json({
+        message: "reset password link sent to mail.",
+      });
+    } else {
+      res.json({
+        message: "user not found register first..",
+      });
+    }
+  };
+  
+  const resetPassword = async (req, res) => {
+    const token = req.body.token; //decode --> email | id
+    const newPassword = req.body.password;
+  
+    const userFromToken = jwt.verify(token, secret);
+    //object -->email,id..
+    //password encrypt...
+    const salt = bcrypt.genSaltSync(10);
+    const hashedPasseord = bcrypt.hashSync(newPassword,salt);
+  
+    const updatedUser = await userModel.findByIdAndUpdate(userFromToken._id, {
+      password: hashedPasseord,
+    });
+    res.json({
+      message: "password updated successfully..",
+    });
+  };
 
 module.exports = {
     getAllUsers,
@@ -112,5 +165,7 @@ module.exports = {
     getUserById,
     addUser1,
     loginUser,
-    signUp
+    signUp,
+    forgotPassword,
+    resetPassword
 }

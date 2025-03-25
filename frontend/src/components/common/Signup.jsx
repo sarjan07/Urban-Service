@@ -14,20 +14,17 @@ import {
   useTheme,
 } from '@mui/material';
 import { AuthContext } from '../../App';
-import AuthService from '../services/AuthService';
+// import AuthService from '../services/AuthService';
 import { toast, ToastContainer } from 'react-toastify';
 // import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios'
 
 function Signup() {
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
+    name: '',
     email: '',
     password: '',
-    confirmPassword: '',
-    phone: '',
-    address: '',
+    confirmPassword: ''
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -43,8 +40,8 @@ function Signup() {
   };
 
   const validateForm = () => {
-    if (!formData.firstName || !formData.lastName) {
-      setError('First name and last name are required');
+    if (!formData.name) {
+      setError('Name are required');
       return false;
     }
     if (!formData.email) {
@@ -83,31 +80,24 @@ function Signup() {
     try {
       // Remove confirmPassword before sending to backend
       const { confirmPassword, ...registrationData } = formData;
-      formData.roleId="67dae88a1a1c29c9b4e66b28"
-      console.log("data to be send to backend is : ",formData)
-      
-      // Call the register function from authService
-      
-      const res=await axios.post('/user',formData)
-      if(res?.status===201){
-        toast.success('Registration successful!', {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
-
-        setTimeout(() => {
-          // await authService.register(registrationData);
-    
      
-          navigate('/login')
-        }, 3000);
+      // Call the register function from authService
+      await register(registrationData);
       
-      }
+      toast.success('Registration successful!', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+
+      setTimeout(() => {
+        navigate('/login');
+      }, 3000);
+    
     } catch (err) {
       setError(err.message || 'An error occurred during registration');
       toast.error(err.message || 'An error occurred during registration', {
@@ -171,15 +161,15 @@ function Signup() {
                   required
                   fullWidth
                   id="firstName"
-                  label="First Name"
-                  name="firstName"
+                  label="Name"
+                  name="name"
                   autoComplete="given-name"
-                  value={formData.firstName}
+                  value={formData.name}
                   onChange={handleChange}
                   disabled={loading}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              {/* <Grid item xs={12} sm={6}>
                 <TextField
                   required
                   fullWidth
@@ -191,7 +181,7 @@ function Signup() {
                   onChange={handleChange}
                   disabled={loading}
                 />
-              </Grid>
+              </Grid> */}
               <Grid item xs={12}>
                 <TextField
                   required
@@ -232,7 +222,7 @@ function Signup() {
                   disabled={loading}
                 />
               </Grid>
-              <Grid item xs={12}>
+              {/* <Grid item xs={12}>
                 <TextField
                   fullWidth
                   name="phone"
@@ -244,8 +234,8 @@ function Signup() {
                   onChange={handleChange}
                   disabled={loading}
                 />
-              </Grid>
-              <Grid item xs={12}>
+              </Grid> */}
+              {/* <Grid item xs={12}>
                 <TextField
                   fullWidth
                   name="address"
@@ -259,7 +249,7 @@ function Signup() {
                   onChange={handleChange}
                   disabled={loading}
                 />
-              </Grid>
+              </Grid> */}
             </Grid>
 
             <Button

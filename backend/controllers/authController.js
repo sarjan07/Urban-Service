@@ -8,6 +8,14 @@ const authController = {
     try {
       const { firstName, lastName, email, password, phone, address } = req.body;
 
+      // Validate required fields
+      if (!firstName || !lastName || !email || !password) {
+        return res.status(400).json({
+          message: 'Please provide all required fields',
+          required: ['firstName', 'lastName', 'email', 'password']
+        });
+      }
+
       // Check if user already exists
       const existingUser = await User.findOne({ email });
       if (existingUser) {
@@ -42,6 +50,23 @@ const authController = {
       });
     } catch (error) {
       console.error('Registration error:', error);
+      
+      // Handle validation errors
+      if (error.name === 'ValidationError') {
+        const messages = Object.values(error.errors).map(err => err.message);
+        return res.status(400).json({
+          message: 'Validation Error',
+          errors: messages
+        });
+      }
+
+      // Handle duplicate key error
+      if (error.code === 11000) {
+        return res.status(400).json({
+          message: 'Email is already registered'
+        });
+      }
+
       res.status(500).json({
         message: 'Registration failed',
         error: error.message,
@@ -53,8 +78,15 @@ const authController = {
     try {
       const { email, password } = req.body;
 
+      // Validate required fields
+      if (!email || !password) {
+        return res.status(400).json({
+          message: 'Please provide email and password'
+        });
+      }
+
       // Find user by email
-      const user = await User.findOne({ email }).populate("roleId");
+      const user = await User.findOne({ email });
       if (!user) {
         return res.status(401).json({ message: 'Invalid email or password' });
       }

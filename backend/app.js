@@ -1,14 +1,38 @@
-const express = require("express"); //express....
+const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const dotenv = require("dotenv");
+
+// Load environment variables
+dotenv.config();
+
 //express object...
 const app = express();
-app.use(cors());
-app.use(express.json()); //to accept data as json...
 
-//import role routes
+// Middleware
+app.use(cors());
+app.use(express.json());
+
+// Connect to MongoDB
+const connectDB = async () => {
+  try {
+    const conn = await mongoose.connect(process.env.MONGODB_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    console.log(`MongoDB Connected: ${conn.connection.host}`);
+  } catch (error) {
+    console.error('MongoDB connection error:', error);
+    process.exit(1);
+  }
+};
+
+// Initialize database connection
+connectDB();
+
+//import routes
 const roleRoutes = require("./src/routes/RoleRoutes");
-app.use("/api", roleRoutes);
+app.use(roleRoutes);
 
 const UserRoutes = require("./src/routes/UserRoutes");
 app.use(UserRoutes);
@@ -28,18 +52,11 @@ app.use(CategoryRoutes);
 const ProfileRoutes = require("./src/routes/ProfileRoutes");
 app.use(ProfileRoutes);
 
-// const SubCategoryController = require('./src/routes/SubCategoryRoutes')
-// app.use(SubCategoryController)
-
 const SubCategoryRoutes = require("./src/routes/SubCategoryRoutes");
 app.use(SubCategoryRoutes);
 
-const BookingModel = require("./src/routes/BookingRoutes");
-app.use(BookingModel);
-
-// app.get('/hello',(req,res)=>{
-//     res.send("Hello,backend is working....");
-// })
+const BookingRoutes = require("./src/routes/BookingRoutes");
+app.use(BookingRoutes);
 
 const CartRoutes = require("./src/routes/CartRoutes");
 app.use(CartRoutes);
@@ -53,22 +70,21 @@ app.use(ServiceRoutes);
 const PaymentRoutes = require("./src/routes/PaymentRoutes");
 app.use(PaymentRoutes);
 
-mongoose
-  .connect("process.env.MONGODB_URI")
-  .then(() => {
-    console.log("database connected....");
-  })
-  .catch((err) => {
-    console.log("Error Connecting Database.....");
-  });
+const authRoutes = require("./routes/auth");
 
-app.post("/user/login", (req, res) => {
-  // Handle login logic here
-  res.send("Login successful");
+// Use routes
+app.use('/api/auth', authRoutes);
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ message: 'Something went wrong!' });
 });
 
 //server creation...
-const PORT = 4000;
+const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
-  console.log("server started on port number ", PORT);
+  console.log(`Server is running on port ${PORT}`);
 });
+
+module.exports = app;
