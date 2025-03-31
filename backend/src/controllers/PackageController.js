@@ -14,17 +14,17 @@ const addPackage = async (req, res) => {
 
 const getallPackages = async (req, res) => {
   try {
-    const cities = await packageModel.find().populate("userId");
+    const packages = await packageModel.find();
     res.status(200).json({
       message: "All Packages",
-      data: getallPackages,
+      data: packages,
     });
   } catch (err) {
     res.status(500).json({ message: err });
   }
 };
 
-const getPackageByUserId = async (req, res) => {
+const getPackageByCategoryId = async (req, res) => {
   try {
     const package = await packageModel.find({ userId: req.params.userId });
     res.status(200).json({
@@ -41,5 +41,5 @@ const getPackageByUserId = async (req, res) => {
 module.exports={
     addPackage,
     getallPackages,
-    getPackageByUserId
+    getPackageByCategoryId
 };

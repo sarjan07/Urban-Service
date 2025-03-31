@@ -17,7 +17,7 @@ import SecurityIcon from '@mui/icons-material/Security';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import AuthService from '../services/AuthService';
 
-function Settings() {
+const Settings = () => {
   const [settings, setSettings] = useState({
     emailNotifications: true,
     smsNotifications: false,

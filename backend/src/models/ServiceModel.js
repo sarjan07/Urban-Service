@@ -2,10 +2,7 @@ const mongoose = require("mongoose")
 const Schema = mongoose.Schema
 
 const ServiceSchema = new Schema({
-    serviceId:{
-        type: String,
-        required:true
-    },
+
     categoryId:{
         type: Schema.Types.ObjectId,
         required:true,
@@ -24,8 +21,7 @@ const ServiceSchema = new Schema({
 })
 module.exports = mongoose.model('Service', ServiceSchema)
 
-
-// ServiceId
-// categoryId
+ 
+ // categoryId
 // serviceName
 // basicDetails

@@ -13,8 +13,8 @@ import {
 } from '@mui/material';
 import AuthService from '../services/AuthService';
 
-function Profile() {
-  const [user, setUser] = useState(null);
+const Profile=()=> {
+  const [user, setUser] = useState();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -51,21 +51,14 @@ function Profile() {
     setSuccess('');
 
     try {
-      const response = await fetch(`http://localhost:3000/api/users/${user.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${authService.getToken()}`
-        },
-        body: JSON.stringify(formData)
-      });
+      const response = await axios(`http://localhost:4000/users`);
 
       if (!response.ok) {
         throw new Error('Failed to update profile');
       }
 
       const updatedUser = await response.json();
-      authService.setUser(updatedUser);
+      setUser(updatedUser);
       setSuccess('Profile updated successfully!');
     } catch (err) {
       setError(err.message || 'Failed to update profile. Please try again.');

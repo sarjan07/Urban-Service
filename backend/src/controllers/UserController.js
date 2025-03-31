@@ -9,7 +9,7 @@ const loginUser =async(req,res) =>{
     const email = req.body.email;
     const password = req.body.password;
 
-    const foundUserFromEmail = await User.findOne({email:req.body.email}).populate("roleId");
+    const foundUserFromEmail = await User.findOne({email:req.body.email});
     console.log(foundUserFromEmail);
 
     if (foundUserFromEmail != null) {
@@ -21,7 +21,7 @@ const loginUser =async(req,res) =>{
                 data:foundUserFromEmail,
             });
          } else{
-                res.status(404).json({
+                res.status(405).json({
                     message:"Email is not valid...",
                 });
             }

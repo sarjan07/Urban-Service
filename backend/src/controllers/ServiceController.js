@@ -14,10 +14,10 @@ const addService = async (req, res) => {
 
 const getallServices = async (req, res) => {
   try {
-    const cities = await serviceModel.find().populate("cityId");
-    res.status(200).json({
+    const allservices = await serviceModel.find()
+    res.status(201).json({
       message: "All Services",
-      data: getallServices,
+      data: allservices,
     });
   } catch (err) {
     res.status(500).json({ message: err });

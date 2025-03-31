@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import { AuthContext } from '../../App';
 
-const Home = () => {
+const Hom1 = () => {
   const { user, isAuthenticated } = useContext(AuthContext);
   const navigate = useNavigate();
   const theme = useTheme();
@@ -40,8 +40,7 @@ const Home = () => {
             p: 6,
             color: 'white',
             boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-          }}
-        >
+          }} >
           <Typography 
             variant="h2" 
             component="h1" 
@@ -89,7 +88,7 @@ const Home = () => {
               boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
             }}
           >
-            Welcome back, {user?.firstName}! You're logged in and ready to use our services.
+            Welcome back, {user?.name}! You're logged in and ready to use our services.
           </Alert>
         )}
 
@@ -102,10 +101,7 @@ const Home = () => {
                   variant="h5" 
                   component="h2" 
                   gutterBottom
-                  sx={{ 
-                    color: theme.palette.primary.main,
-                    fontWeight: 600,
-                  }}
+                  sx={{ color: theme.palette.primary.main, fontWeight: 600 }}
                 >
                   Easy Service Booking
                 </Typography>
@@ -117,7 +113,7 @@ const Home = () => {
                 <Button 
                   size="small" 
                   color="primary" 
-                  onClick={() => navigate('/services')}
+                  onClick={() => navigate('/home/services')}
                   sx={{ 
                     fontWeight: 500,
                     textTransform: 'none',
@@ -151,7 +147,7 @@ const Home = () => {
                 <Button 
                   size="small" 
                   color="primary" 
-                  onClick={() => navigate('/manage')}
+                  onClick={() => navigate('/home/select-services')}
                   sx={{ 
                     fontWeight: 500,
                     textTransform: 'none',
@@ -185,7 +181,7 @@ const Home = () => {
                 <Button 
                   size="small" 
                   color="primary" 
-                  onClick={() => navigate('/service-provider/add')}
+                  onClick={() => navigate('/home/service-provider/add')}
                   sx={{ 
                     fontWeight: 500,
                     textTransform: 'none',
@@ -219,7 +215,7 @@ const Home = () => {
                 <Button 
                   size="small" 
                   color="primary" 
-                  onClick={() => navigate('/service')}
+                  onClick={() => navigate('/home/service')}
                   sx={{ 
                     fontWeight: 500,
                     textTransform: 'none',
@@ -253,7 +249,7 @@ const Home = () => {
                 <Button 
                   size="small" 
                   color="primary" 
-                  onClick={() => navigate('/service-provider/manage')}
+                  onClick={() => navigate('/home/service-provider/manage')}
                   sx={{ 
                     fontWeight: 500,
                     textTransform: 'none',
@@ -267,7 +263,7 @@ const Home = () => {
         </Grid>
 
         {/* Call to Action Section */}
-        <Box 
+        {/* <Box 
           sx={{ 
             textAlign: 'center', 
             mt: 8,
@@ -311,11 +307,12 @@ const Home = () => {
             }}
           >
             {isAuthenticated ? 'View Services' : 'Sign Up Now'}
-          </Button>
+          </Button> 
         </Box>
+          */}
       </Box>
     </Container>
   );
 }
 
-export default Home;
+export default Hom1;

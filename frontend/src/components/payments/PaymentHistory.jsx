@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import 'bootstrap/dist/css/bootstrap.min.css';
+// import 'bootstrap/dist/css/bootstrap.min.css';
 
 const PaymentHistory = () => {
     const [payments, setpayments] = useState([]);
 
     useEffect(() => {
-        axios.get("http://localhost:5000/payments")
-            .then(response => setPayments(response.data))
+        axios.get("http://localhost:4000/get")
+            .then(response => setpayments(response.data))
             .catch(error => console.error("Error fetching payment history:", error));
     }, []);
 

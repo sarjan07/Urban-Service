@@ -14,7 +14,10 @@ import "./App.css";
 import { Box } from "@mui/material";
 import theme from "./theme";
 import axios from "axios";
-
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { AuthProvider } from "./context/AuthContext";
+//
 // Import Pages
 import Home from "./components/pages/Home";
 import Login from "./components/common/Login";
@@ -28,8 +31,8 @@ import ManageServices from "./components/service_provider/ManageServices";
 import AddService from "./components/service_provider/AddService";
 
 // Import Payment Components
-import Payments from './components/payments/Payments'
-import PaymentHistory from './components/payments/PaymentHistory'
+import Payments from "./components/payments/Payments";
+import PaymentHistory from "./components/payments/PaymentHistory";
 //
 // Import Layout Components
 import Navbar from "./components/layouts/Navbar";
@@ -39,10 +42,10 @@ import NotFound from "./components/pages/NotFound";
 // Import Services
 import AuthService from "../src/components/services/AuthService";
 import emailService from "../src/components/services/EmailService";
-import { ResetPassword } from "./components/common/ResetPassword";
-
-// Import Route Protection
-// import PrivateRoute from './components/common/PrivateRoute'
+import ResetPassword from "./components/common/ResetPassword";
+import Home1 from "./components/pages/Home1";
+import PrivateRoute from "./components/common/PrivateRoute";
+import ForgotPassword from "./components/common/ForgotPassword";
 
 // Create contexts
 export const AuthContext = createContext();
@@ -88,6 +91,17 @@ function App() {
     severity: "success",
   });
 
+  useEffect(() => {
+    const checkAuth = async () => {
+      const currentUser = await AuthService.getCurrentUser();
+      if (currentUser) {
+        setUser(currentUser);
+        setIsAuthenticated(true);
+      }
+    };
+    checkAuth();
+  }, []);
+  
   // Show notification
   const showNotification = (message, severity = "success") => {
     setNotification({
@@ -115,14 +129,14 @@ function App() {
       showNotification("Login successful!");
     },
     logout: () => {
-      authService.logout();
+      AuthService.logout();
       setUser(null);
       setIsAuthenticated(false);
       showNotification("Logged out successfully!");
     },
     register: async (userData) => {
       try {
-        const user = await authService.register(userData);
+        const user = await AuthService.register(userData);
         setUser(user);
         setIsAuthenticated(true);
         emailService.sendWelcomeEmail(user.email, user.firstName);
@@ -144,98 +158,68 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <AuthContext.Provider value={authContextValue}>
-        <NotificationContext.Provider value={notificationContextValue}>
-          <LocalizationProvider dateAdapter={AdapterDateFns}>
-            {/* <Router> */}
-            <Layout>
-              <Routes>
-                {/* Public Routes */}
-                <Route path="/" element={<Home />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/signup" element={<Signup />} />
-                <Route path="/resetpassword/:token" element={<ResetPassword/>}></Route>
+      <AuthProvider>
+        <AuthContext.Provider value={authContextValue}>
+          <NotificationContext.Provider value={notificationContextValue}>
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+             
+                <Layout>
+                  <Routes>
+                    {/* Public Routes */}
+                    <Route path="/" element={<Home />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/signup" element={<Signup />} />
+                    <Route path="/forgot-password" element={<ForgotPassword />} />
+                    <Route path="/reset-password" element={<ResetPassword />} />
 
-                {/* Protected Service Provider Routes */}
-                <Route path="/service-provider">
-                  <Route path="services" element={
-                      // <PrivateRoute>
-                      <Services />
-                      //</PrivateRoute>
-                    }
-                  />
-                  <Route path="manage" element={
-                      //<PrivateRoute>
-                      <ManageServices />
-                      //</PrivateRoute>
-                    }
-                  />
-                  <Route path="add" element={
-                      //<PrivateRoute>
-                      <AddService />
-                      //</PrivateRoute>
-                    }
-                  />
-                </Route>
+                    {/* Protected Service Provider Routes */}
+                    <Route path="/home" element={<Home />}>
+                      <Route path="service-provider">
+                        <Route path="services" element={<Services />} />
+                        
+                        <Route path="add" element={<AddService />} />
+                      </Route>
+                    </Route>
+                    <Route path="/manage" element={<ManageServices />} />
+                    {/* Protected Payment Routes */}
+                    <Route path="select-services">
+                      <Route path="payment" element={<Payments />} />
+                      <Route path="history" element={<PaymentHistory />} />
+                    </Route>
 
-                {/* Protected Payment Routes */}
-                <Route path="/payments">
-                    <Route 
-                      index
-                      element={
-                       // <PrivateRoute>
-                          <Payments />
-                       // </PrivateRoute>
-                      } 
-                    />
-                    <Route 
-                      path="history" 
-                      element={
-                       // <PrivateRoute>
-                          <PaymentHistory />
-                       // </PrivateRoute>
-                      } 
-                    />
-                  </Route>
+                    {/* Protected User Routes */}
+                    <Route path="user">
+                      <Route path="profile" element={<Profile />} />
+                      <Route path="settings" element={<Settings />} />
+                    </Route>
 
-                {/* Protected User Routes */}
-                <Route path="/user">
-                  <Route path="profile" element={
-                      // <PrivateRoute>
-                      <Profile />
-                      // </PrivateRoute>
-                    }
-                  />
-                  <Route path="settings" element={
-                      // <PrivateRoute>
-                      <Settings />
-                      // </PrivateRoute>
-                    }
-                  />
-                </Route>
+                    {/* Protected dashboard route */}
+                    <Route path="/dashboard" element={<Home1 />} />
 
-                {/* 404 Route */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </Layout>
-            {/* </Router> */}
-            <Snackbar
-              open={notification.open}
-              autoHideDuration={6000}
-              onClose={closeNotification}
-              anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-            >
-              <Alert
+                    {/* 404 Route */}
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </Layout>
+              
+              <ToastContainer />
+              <Snackbar
+                open={notification.open}
+                autoHideDuration={6000}
                 onClose={closeNotification}
-                severity={notification.severity}
-                sx={{ width: "100%" }}
+                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
               >
-                {notification.message}
-              </Alert>
-            </Snackbar>
-          </LocalizationProvider>
-        </NotificationContext.Provider>
-      </AuthContext.Provider>
+                <Alert
+                  onClose={closeNotification}
+                  severity={notification.severity}
+                  sx={{ width: "100%" }}
+                >
+                  {notification.message}
+                </Alert>
+              </Snackbar>
+            </LocalizationProvider>
+          </NotificationContext.Provider>
+        </AuthContext.Provider>
+      </AuthProvider>
     </ThemeProvider>
   );
 }

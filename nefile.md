@@ -18,6 +18,7 @@ import { AuthContext } from '../../App';
 import { toast, ToastContainer } from 'react-toastify';
 // import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
+import { useForm } from 'react-hook-form';
 
 const Signup=()=> {
   const [formData, setFormData] = useState(
@@ -29,12 +30,13 @@ const Signup=()=> {
     });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { register } = useContext(AuthContext);
+  // const { register } = useContext(AuthContext);
   const navigate = useNavigate();
+  const {register,handleSubmit}=useForm();
   const theme = useTheme();
 
   const postData = async () => {
-    const res = await axios.post("https://localhost:4000/user")
+
   }
   const handleChange = (e) => {
     setFormData({
@@ -71,23 +73,16 @@ const Signup=()=> {
     return true;
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-
-    if (!validateForm()) {
-      return;
-    }
-
+  const submitHandler = async (data) => {
+    console.log("Data to be send to backend is : ",data)
     setLoading(true);
 
-    try {
-      // Remove confirmPassword before sending to backend
-      const { confirmPassword, ...registrationData } = formData;
-     
-      // Call the register function from authService
-      await register(registrationData);
+    try {   
+      const res = await axios.post("https://localhost:4000/user")
       
+      console.log("Response Data : ",res.data)
+
+      if(res?.status===201){
       toast.success('Registration successful!', {
         position: "top-right",
         autoClose: 3000,
@@ -100,8 +95,8 @@ const Signup=()=> {
 
       setTimeout(() => {
         navigate('/login');
-      }, 3000);
-    
+      }, 2000);
+    }
     } catch (err) {
       setError(err.message || 'An error occurred during registration');
       toast.error(err.message || 'An error occurred during registration', {
@@ -158,7 +153,7 @@ const Signup=()=> {
             </Alert>
           )}
 
-          <Box component="form" onSubmit={handleSubmit} noValidate>
+          <Box component="form" onSubmit={handleSubmit(submitHandler)} noValidate>
             <Grid container spacing={2}>
               <Grid item xs={12} >
                 <TextField
@@ -182,8 +177,7 @@ const Signup=()=> {
                   label="Email Address"
                   name="email"
                   autoComplete="email"
-                  value={formData.email}
-                  onChange={handleChange}
+                  {...register("email")}
                   disabled={loading}
                 />
               </Grid>
@@ -196,8 +190,7 @@ const Signup=()=> {
                   type="password"
                   id="password"
                   autoComplete="new-password"
-                  value={formData.password}
-                  onChange={handleChange}
+                {...register("password")}
                   disabled={loading}
                 />
               </Grid>

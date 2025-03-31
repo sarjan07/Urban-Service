@@ -1,7 +1,6 @@
 import { useContext, useState } from 'react';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
-import axios from 'axios';
 import {
   Container,
   Box,
@@ -14,18 +13,16 @@ import {
   CircularProgress,
   useTheme,
 } from '@mui/material';
-import { AuthContext } from '../../App';
-import { toast,ToastContainer } from 'react-toastify';
+import { useAuth } from '../../context/AuthContext';
+import { toast, ToastContainer } from 'react-toastify';
 
 function Login() {
-  const { login } = useContext(AuthContext);
+  const { login } = useAuth();
   const navigate = useNavigate();
   const theme = useTheme();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-    
-
-  // React Hook Form
+  
   const {
     control,
     handleSubmit,
@@ -37,38 +34,14 @@ function Login() {
     },
   });
 
-  // Submit Handler
   const submitHandler = async (data) => {
-    console.log("Data to be send to backend : ",data);
     setError('');
     setLoading(true);
 
     try {
-      const res = await axios.post('/user/login', data);
-      console.log("Response Data : ",res.data)
-
-      if(res?.status===200){
-        toast.success('Login successful!', {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
-
-        setTimeout(() => {
-          
-    
-     
-          navigate('/')
-        }, 3000);
+      await login(data);
       
-      }
-    } catch (err) {
-      setError(err.response?.data?.message || 'Login failed. Please try again.');
-      toast.error(err.message || 'An error occurred during registration', {
+      toast.success('Login successful!', {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -76,7 +49,22 @@ function Login() {
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
-        });
+      });
+
+      setTimeout(() => {
+        navigate('/home');
+      }, 3000);
+    } catch (err) {
+      setError(err.message || 'An error occurred during login');
+      toast.error(err.message || 'An error occurred during login', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
     } finally {
       setLoading(false);
     }
@@ -124,7 +112,6 @@ function Login() {
           )}
 
           <Box component="form" onSubmit={handleSubmit(submitHandler)} noValidate>
-            {/* Email Field */}
             <Controller
               name="email"
               control={control}
@@ -153,7 +140,6 @@ function Login() {
               )}
             />
 
-            {/* Password Field */}
             <Controller
               name="password"
               control={control}
@@ -188,12 +174,22 @@ function Login() {
                 <input type="checkbox" id="remember" />
                 <label htmlFor="remember">Remember Me</label>
               </div>
-              <a href="#" className="forgot-password">
+              <Link
+                component={RouterLink}
+                to="/forgot-password"
+                variant="body2"
+                sx={{
+                  color: theme.palette.primary.main,
+                  textDecoration: 'none',
+                  '&:hover': {
+                    textDecoration: 'underline',
+                  },
+                }}
+              >
                 Forgot Password?
-              </a>
+              </Link>
             </div>
 
-            {/* Submit Button */}
             <Button
               type="submit"
               fullWidth
@@ -212,7 +208,6 @@ function Login() {
               {loading ? <CircularProgress size={24} color="inherit" /> : 'Login'}
             </Button>
 
-            {/* Sign Up Link */}
             <Box sx={{ textAlign: 'center' }}>
               <Link
                 component={RouterLink}

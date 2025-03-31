@@ -3,7 +3,7 @@ const Payment = require("../models/PaymentModel");
 // Get all payment methods
 const getAllPayments = async (req, res) => {
   try {
-      const payments = await Payment.find().populate();
+      const payments = await Payment.find();
       res.status(201).json({
         message: "All Payments",
         data: payments,
