@@ -3,18 +3,32 @@ const Schema = mongoose.Schema
 
 const ServiceSchema = new Schema({
 
+    serviceTitle:{
+        type: String
+    },
+    description:{
+        type: String,
+    },
+    price:{
+        type: Number,
+    },
     categoryId:{
         type: Schema.Types.ObjectId,
         required:true,
         ref: "Category"
     },
-    serviceName:{
-        type:String,
-        required: true
+    state:{
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref:"State"
     },
-    basicDetails:{
-        type: String,
-        required: true
+    city:{
+        type: Schema.Types.ObjectId,
+        ref:"City"
+    },
+    area:{
+        type: Schema.Types.ObjectId,
+        ref:"Area"
     }
 },{
     timestamps:true

@@ -32,26 +32,14 @@ const Home = () => {
       <Box sx={{ mt: 4, mb: 4 }}>
         {/* Hero Section */}
         <Box 
-          sx={{ 
-            textAlign: 'center', 
-            mb: 6,
-            background: `linear-gradient(45deg, ${theme.palette.primary.main} 30%, ${theme.palette.primary.light} 90%)`,
+          sx={{ textAlign: 'center', mb: 6, background: `linear-gradient(45deg, ${theme.palette.primary.main} 30%, ${theme.palette.primary.light} 90%)`,
             borderRadius: 2,
-            p: 6,
-            color: 'white',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-          }}
-        >
-          <Typography 
-            variant="h2" 
-            component="h1" 
+            p: 6, color: 'white',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.1)'}}>
+          <Typography variant="h2"  component="h1" 
             gutterBottom
-            sx={{ 
-              fontWeight: 700,
-              textShadow: '2px 2px 4px rgba(0,0,0,0.2)',
-            }}
-          >
-            Welcome to Urban Services
+            sx={{  fontWeight: 700, textShadow: '2px 2px 4px rgba(0,0,0,0.2)'}}>
+            Welcome to Local Services
           </Typography>
           <Typography 
             variant="h5" 
@@ -60,7 +48,7 @@ const Home = () => {
               opacity: 0.9,
             }}
           >
-            Your one-stop platform for all urban service needs
+            Your one-stop platform for all local service needs
           </Typography>
           <Button
             variant="contained"
@@ -117,13 +105,13 @@ const Home = () => {
                 <Button 
                   size="small" 
                   color="primary" 
-                  onClick={() => navigate('/services')}
+                  onClick={() => navigate('/user/booking')}
                   sx={{ 
                     fontWeight: 500,
                     textTransform: 'none',
                   }}
                 >
-                  Learn More →
+                  Service Booking →
                 </Button>
               </CardActions>
             </Card>
@@ -163,7 +151,7 @@ const Home = () => {
             </Card>
           </Grid>
 
-          <Grid item xs={12} md={4}>
+          {/* <Grid item xs={12} md={4}>
             <Card sx={{ height: '90%' }}>
               <CardContent>
                 <Typography 
@@ -195,9 +183,9 @@ const Home = () => {
                 </Button>
               </CardActions>
             </Card>
-          </Grid>
+          </Grid> */}
 
-          <Grid item xs={12} md={4}>
+          {/* <Grid item xs={12} md={4}>
             <Card sx={{ height: '100%' }}>
               <CardContent>
                 <Typography 
@@ -229,7 +217,7 @@ const Home = () => {
                 </Button>
               </CardActions>
             </Card>
-          </Grid>
+          </Grid> */}
 
           <Grid item xs={12} md={4}>
             <Card sx={{ height: '100%' }}>
@@ -253,7 +241,7 @@ const Home = () => {
                 <Button 
                   size="small" 
                   color="primary" 
-                  onClick={() => navigate('/service-provider/manage')}
+                  onClick={() => navigate('/user/manage')}
                   sx={{ 
                     fontWeight: 500,
                     textTransform: 'none',

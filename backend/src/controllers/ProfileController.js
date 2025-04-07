@@ -23,7 +23,7 @@ const addProfile = async (req, res) => {
   try {
     const savedHording = await profileModel.create(req.body);
     res.status(201).json({
-      message: "Hording added successfully",
+      message: "Profile added successfully",
       data: savedHording,
     });
   } catch (err) {

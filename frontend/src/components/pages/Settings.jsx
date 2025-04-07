@@ -39,14 +39,7 @@ const Settings = () => {
     setSuccess('');
 
     try {
-      const response = await fetch(`http://localhost:3000/api/users/${AuthService.getCurrentUser().id}/settings`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${AuthService.getToken()}`
-        },
-        body: JSON.stringify(settings)
-      });
+      const response = await axxios.post(`http://localhost:4000/users`);
 
       if (!response.ok) {
         throw new Error('Failed to update settings');

@@ -1,3 +1,4 @@
+// const ServiceModel = require("../models/ServiceModel");
 const serviceModel = require("../models/ServiceModel");
 
 const addService = async (req, res) => {
@@ -37,6 +38,12 @@ const getServiceByCategoryId = async (req, res) => {
     });
   }
 };
+
+// const delservice = async (req, res) => {
+//   try {
+//     const delservices = await serviceModel.
+//   }
+// }
 
 module.exports={
     addService,

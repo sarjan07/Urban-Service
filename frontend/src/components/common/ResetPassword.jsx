@@ -109,24 +109,12 @@ const ResetPassword=()=> {
 
   return (
     <Container maxWidth="sm">
-      <Box
-        sx={{
-          mt: 8,
-          mb: 4,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
-      >
-        <Paper
-          elevation={3}
-          sx={{
+      <Box sx={{ mt: 8, mb: 4, display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+        <Paper elevation={3} sx={{
             p: 4,
             width: '100%',
             borderRadius: 2,
-            boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-          }}
-        >
+            boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}>
           <Typography
             component="h1"
             variant="h4"
@@ -135,9 +123,7 @@ const ResetPassword=()=> {
             sx={{
               fontWeight: 700,
               color: theme.palette.primary.main,
-              mb: 3,
-            }}
-          >
+              mb: 3 }}>
             Reset Password
           </Typography>
 

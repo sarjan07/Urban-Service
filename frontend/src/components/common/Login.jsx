@@ -14,7 +14,7 @@ import {
   useTheme,
 } from '@mui/material';
 import { useAuth } from '../../context/AuthContext';
-import { toast, ToastContainer } from 'react-toastify';
+import { Bounce, toast, ToastContainer } from 'react-toastify';
 
 function Login() {
   const { login } = useAuth();
@@ -23,6 +23,8 @@ function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   
+  
+
   const {
     control,
     handleSubmit,
@@ -35,38 +37,56 @@ function Login() {
   });
 
   const submitHandler = async (data) => {
-    setError('');
-    setLoading(true);
 
     try {
-      await login(data);
-      
-      toast.success('Login successful!', {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
+      const res = await axios.post("/user", {
+        email: data.email,
+        password: data.password,
+        role, // Include role in the request
       });
 
-      setTimeout(() => {
-        navigate('/home');
-      }, 3000);
+      if (res.status === 200 && res.data.token) {
+        // Store the token and user info
+        localStorage.setItem("token", res.data.token);
+        localStorage.setItem("id", res.data.user.id);
+        localStorage.setItem("role", role); // Store selected role
+
+        toast.success("Login Successful!", {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          theme: "colored",
+          transition: Bounce,
+        });
+
+        setTimeout(() => {
+          // Redirect based on role
+          if (role === "admin") {
+            navigate("/admin/dashboard");
+          } else if (role === "service-provider"){
+            navigate("/serv_pro/dashboard");
+          } else {
+            navigate("/user/dashboard")
+          }
+        }, 2000);
+      }
     } catch (err) {
-      setError(err.message || 'An error occurred during login');
-      toast.error(err.message || 'An error occurred during login', {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-    } finally {
-      setLoading(false);
+      toast.error(
+        err.response?.data?.message || "Invalid email or password",
+        {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          theme: "light",
+          transition: Bounce,
+        }
+      );
     }
   };
 

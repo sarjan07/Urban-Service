@@ -41,7 +41,7 @@ api.interceptors.response.use(
 const AuthService = {
   async login(credentials) {
     try {
-      const response = await api.post('/user/login', credentials);
+      const response = await axios.post('/user/login', credentials);
       if (response.data.token) {
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('user', JSON.stringify(response.data.user));
@@ -86,7 +86,7 @@ const AuthService = {
 
   async getCurrentUserFromServer() {
     try {
-      const response = await api.get('/auth/me');
+      const response = await get('/me');
       return response.data;
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Failed to get user data');

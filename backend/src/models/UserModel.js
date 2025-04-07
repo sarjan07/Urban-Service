@@ -1,28 +1,23 @@
 const mongoose = require("mongoose")
 const Schema = mongoose.Schema;
 
-const UserSchema = new Schema({
+const UserSchema =new Schema({
     name:{
         type:String,
         required: true,
     },
-    // lastName:{
-    //     type:String,
-    //     required: true,
-    // },
+
     status:{
         type:Boolean,
-        default:true
+        default: "Active"
     },
-    // phone:{
-    //     type:Number,
-    //     // required: true,
-    // },
-    // roleId:{
-    //     type:Schema.Types.ObjectId,
-    //     ref:"roles",
-    //     // required:true
-    // },
+
+    roleId:{
+        // type:Schema.Types.ObjectId,
+        type: String,
+        ref:"roles",
+        // required:true
+    },
     email:{
         type:String,
         required: true,

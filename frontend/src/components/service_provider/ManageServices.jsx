@@ -94,7 +94,7 @@ const ManageServices = () => {
     if (!selectedService) return;
 
     try {
-      const response = await axios.put(
+      const response = await axios.get(
         `http://localhost:4000/allservices/${selectedService._id}`,
         editFormData
       );

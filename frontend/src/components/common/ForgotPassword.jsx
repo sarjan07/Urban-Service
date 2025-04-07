@@ -99,15 +99,7 @@ function ForgotPassword() {
 
   return (
     <Container maxWidth="sm">
-      <Box
-        sx={{
-          mt: 8,
-          mb: 4,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
-      >
+      <Box sx={{ mt: 8, mb: 4, display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
         <Paper
           elevation={3}
           sx={{
@@ -115,8 +107,7 @@ function ForgotPassword() {
             width: '100%',
             borderRadius: 2,
             boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-          }}
-        >
+          }}>
           <Typography
             component="h1"
             variant="h4"
@@ -126,8 +117,7 @@ function ForgotPassword() {
               fontWeight: 700,
               color: theme.palette.primary.main,
               mb: 3,
-            }}
-          >
+            }}>
             Forgot Password
           </Typography>
 
@@ -136,7 +126,7 @@ function ForgotPassword() {
               {error}
             </Alert>
           )}
-
+          
           {!otpSent ? (
             <Box component="form" onSubmit={handleSendOTP} noValidate>
               <TextField
@@ -174,21 +164,9 @@ function ForgotPassword() {
             </Box>
           ) : (
             <Box component="form" onSubmit={handleVerifyOTP} noValidate>
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="otp"
-                label="Enter OTP"
-                name="otp"
-                autoComplete="off"
-                autoFocus
-                value={otp}
-                onChange={(e) => setOtp(e.target.value)}
-                disabled={loading}
-                inputProps={{ maxLength: 4 }}
-                sx={{ mb: 3 }}
-              />
+              <TextField margin="normal" required fullWidth id="otp" label="Enter OTP" name="otp"
+                autoComplete="off" autoFocus value={otp} onChange={(e) => setOtp(e.target.value)}
+                disabled={loading} inputProps={{ maxLength: 4 }} sx={{ mb: 3 }}/>
 
               <Button
                 type="submit"

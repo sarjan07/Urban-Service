@@ -41,11 +41,25 @@ import NotFound from "./components/pages/NotFound";
 
 // Import Services
 import AuthService from "../src/components/services/AuthService";
-import emailService from "../src/components/services/EmailService";
+import emailService from "../src/components/services/emailService";
 import ResetPassword from "./components/common/ResetPassword";
 import Home1 from "./components/pages/Home1";
 import PrivateRoute from "./components/common/PrivateRoute";
 import ForgotPassword from "./components/common/ForgotPassword";
+
+import AdminSidebar from "./components/admin/AdminSidebar";
+import  EditUser  from "./components/admin/EditUser";
+import Faq from "./components/pages/faq";
+import Privacy from "./components/pages/Privacy";
+import Contact from "./components/pages/Contact";
+import About from "./components/pages/About";
+import Term from "./components/pages/Term";
+import { LogOut } from "./components/common/LogOut";
+import ServiceProvider from "./components/service_provider/ServiceProvider";
+import { ViewUser } from "./components/admin/ViewUser";
+import UserPage from "./components/user/UserPage";
+import EasyBooking from "./components/user/EasyBooking";
+import { AddUser } from "./components/admin/AddUser";
 
 // Create contexts
 export const AuthContext = createContext();
@@ -57,7 +71,7 @@ const Layout = ({ children }) => {
   const isAuthPage =
     location.pathname === "/login" || location.pathname === "/signup";
   axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL;
-
+  
   return (
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       {!isAuthPage && <Navbar />}
@@ -74,7 +88,7 @@ const Layout = ({ children }) => {
             background: "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",
           }),
         }}
-      >
+        >
         {children}
       </Box>
       {!isAuthPage && <Footer />}
@@ -82,14 +96,16 @@ const Layout = ({ children }) => {
   );
 };
 
-function App() {
+function App() { 
+  axios.defaults.baseURL = "https://localhost:4000"
+
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [notification, setNotification] = useState({
-    open: false,
-    message: "",
-    severity: "success",
-  });
+  // const [notification, setNotification] = useState({
+  //   open: false,
+  //   message: "",
+  //   severity: "success",
+  // });
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -103,21 +119,21 @@ function App() {
   }, []);
   
   // Show notification
-  const showNotification = (message, severity = "success") => {
-    setNotification({
-      open: true,
-      message,
-      severity,
-    });
-  };
+  // const showNotification = (message, severity = "success") => {
+  //   setNotification({
+  //     open: true,
+  //     message,
+  //     severity,
+  //   });
+  // };
 
   // Close notification
-  const closeNotification = () => {
-    setNotification({
-      ...notification,
-      open: false,
-    });
-  };
+  // const closeNotification = () => {
+  //   setNotification({
+  //     ...notification,
+  //     open: false,
+  //   });
+  // };
 
   // Auth context value
   const authContextValue = {
@@ -150,17 +166,17 @@ function App() {
   };
 
   // Notification context value
-  const notificationContextValue = {
-    showNotification,
-    closeNotification,
-  };
+  // const notificationContextValue = {
+  //   showNotification,
+  //   closeNotification,
+  // };
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <AuthProvider>
         <AuthContext.Provider value={authContextValue}>
-          <NotificationContext.Provider value={notificationContextValue}>
+          {/* <NotificationContext.Provider value={notificationContextValue}> */}
             <LocalizationProvider dateAdapter={AdapterDateFns}>
              
                 <Layout>
@@ -171,53 +187,71 @@ function App() {
                     <Route path="/signup" element={<Signup />} />
                     <Route path="/forgot-password" element={<ForgotPassword />} />
                     <Route path="/reset-password" element={<ResetPassword />} />
+                    {/* <Route path='/logout' element={<LogOut/>}></Route> */}
 
                     {/* Protected Service Provider Routes */}
-                    <Route path="/home" element={<Home />}>
-                      <Route path="service-provider">
-                        <Route path="services" element={<Services />} />
-                        
-                        <Route path="add" element={<AddService />} />
+                    {/* <Route path="/home" element={<Home />}> */}
+                      <Route path="/service-provider" element={<ServiceProvider/>}>
+                        <Route path="services" element={<Services />} >
+                        </Route>
                       </Route>
-                    </Route>
-                    <Route path="/manage" element={<ManageServices />} />
+                          <Route path="add" element={<AddService />} />
+                    {/* </Route> */}
+                    {/* <Route path="/user" element={<Home/>}>
+                    </Route> */}
+
                     {/* Protected Payment Routes */}
-                    <Route path="select-services">
+                    <Route path="/select-services">
                       <Route path="payment" element={<Payments />} />
                       <Route path="history" element={<PaymentHistory />} />
                     </Route>
 
                     {/* Protected User Routes */}
-                    <Route path="user">
-                      <Route path="profile" element={<Profile />} />
-                      <Route path="settings" element={<Settings />} />
+                    <Route path="/user">
+                    <Route path="manage" element={<ManageServices />} />
+                    <Route path="profile" element={<Profile />} />
+                    <Route path="settings" element={<Settings />} />
+                    <Route path="booking" element={<EasyBooking/>}/>
                     </Route>
 
                     {/* Protected dashboard route */}
-                    <Route path="/dashboard" element={<Home1 />} />
+                    {/* <Route path="/dashboard" element={<Home1 />} /> */}
 
                     {/* 404 Route */}
                     <Route path="*" element={<NotFound />} />
+                    <Route path="/faq" element={<Faq/>}></Route>
+                    <Route path="/privacy" element={<Privacy/>}></Route>
+                    <Route path="/contact" element={<Contact/>}></Route>
+                    <Route path="/about" element={<About/>}></Route>
+                    <Route path="/terms" element={<Term/>}></Route>
+                   
+
+                    {/* Admin Sidebar & Navbar */}
+                    <Route path="/admin" element={<AdminSidebar/>}>
+                      <Route path="edituser" element={<EditUser/>}></Route>
+                      <Route path="viewuser" element={<ViewUser/>}></Route>
+                      <Route path="profile" element={<Profile/>}></Route>
+                      <Route path="adduser" element={<AddUser/>}></Route>
+                    </Route>
+
+                    <Route path="/use" element={<UserPage/>}>
+                    
+                    </Route>
                   </Routes>
                 </Layout>
               
               <ToastContainer />
-              <Snackbar
-                open={notification.open}
-                autoHideDuration={6000}
-                onClose={closeNotification}
-                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-              >
+              <Snackbar autoHideDuration={6000} anchorOrigin={{ vertical: "bottom", horizontal: "right" }}>
                 <Alert
-                  onClose={closeNotification}
-                  severity={notification.severity}
+                  // onClose={closeNotification}
+                  // severity={notification.severity}
                   sx={{ width: "100%" }}
                 >
-                  {notification.message}
+                  {/* {notification.message} */}
                 </Alert>
               </Snackbar>
             </LocalizationProvider>
-          </NotificationContext.Provider>
+          {/* </NotificationContext.Provider> */}
         </AuthContext.Provider>
       </AuthProvider>
     </ThemeProvider>

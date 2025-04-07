@@ -9,7 +9,7 @@ const loginUser =async(req,res) =>{
     const email = req.body.email;
     const password = req.body.password;
 
-    const foundUserFromEmail = await User.findOne({email:req.body.email});
+    const foundUserFromEmail = await User.find({email:req.body.email});
     console.log(foundUserFromEmail);
 
     if (foundUserFromEmail != null) {
@@ -51,7 +51,6 @@ const signUp = async (req, res) => {
 
 
 const addUser1  = async(req,res)=>{
-
     //try catch if else...
     try{
         const createdUser = await User.create(req.body)
@@ -69,7 +68,7 @@ const addUser1  = async(req,res)=>{
 }
 
 const getAllUsers = async(req,res) => {
-    const users =await User.findOne().populate("roleId")
+    const users =await User.find().populate("roleId")
     
     res.json({
         message:"user fetched successfully....",
@@ -96,15 +95,7 @@ const deleteUser = async(req,res) =>{
 };
 
 const getUserById = async(req,res) =>{
-    // const foundUser = await User.create(req.params.id)
-
-    // res.json({
-    //     message:"user fetched...",
-    //     data:foundUser
-
-
-
-    // });
+    
     try {
         const user = await User.findById(req.params.id); 
         if (!user) {
@@ -150,13 +141,42 @@ const forgotPassword = async (req, res) => {
     const salt = bcrypt.genSaltSync(10);
     const hashedPasseord = bcrypt.hashSync(newPassword,salt);
   
-    const updatedUser = await userModel.findByIdAndUpdate(userFromToken._id, {
+    const updatedUser = await User.findByIdAndUpdate(userFromToken._id, {
       password: hashedPasseord,
     });
     res.json({
       message: "password updated successfully..",
     });
   };
+
+
+  const updateUser = async (req, res) => {
+    try {
+      const userId = req.params.id;
+  
+      const updatedUser = await User.findByIdAndUpdate(userId, req.body, {
+        new: true, // return the updated document
+        runValidators: true // validate before updating
+      });
+  
+      if (!updatedUser) {
+        return res.status(404).json({
+          message: "User not found",
+        });
+      }
+  
+      res.status(200).json({
+        message: "User updated successfully",
+        data: updatedUser,
+      });
+    } catch (err) {
+      res.status(500).json({
+        message: "Error updating user",
+        error: err.message,
+      });
+    }
+  };
+  
 
 module.exports = {
     getAllUsers,
@@ -167,5 +187,6 @@ module.exports = {
     loginUser,
     signUp,
     forgotPassword,
-    resetPassword
+    resetPassword,
+    updateUser
 }

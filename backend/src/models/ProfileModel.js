@@ -3,29 +3,26 @@ const Schema = mongoose.Schema;
 
 const profileSchema = new Schema({
 
-    hoardingDimension:{
-        type: String,
-        required: true
-    },
-    hoardingType:{
-        enum: ['Unipole', 'Billboard', 'Gantry', 'Digital'],
-        type: String,
-        required: true
-        
-    },
-    Availablity_Status:{
-        type: Boolean,
+    
+    userId: {
+        type: Schema.Types.ObjectId,
+        ref: "users",
         required: true,
-        default: true
+        unique: true
     },
-    hourlyRate:{
-        type: Number,
-        required: true
+    name: {
+        type: String,
+        required: true,
     },
-    hordingURL:{
+    email: {
         type: String,
         required: true
+
+    },
+    profilePicture: {
+        type: String, // Store image URL (uploaded to cloud storage)
     }
+    
     
 
 

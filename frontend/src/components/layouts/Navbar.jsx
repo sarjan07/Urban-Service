@@ -42,6 +42,11 @@ function Navbar() {
   const [currentUser, setCurrentUser] = useState(AuthService.getCurrentUser());
   const [openLogoutDialog, setOpenLogoutDialog] = useState(false);
 
+  // logoutHnadler();
+  // {
+  //   localStorage.Clear();
+  //   navigate("/login")
+  // }
   // Re-check authentication state when navigating
   useEffect(() => {
     const checkAuth = () => {
@@ -82,6 +87,7 @@ function Navbar() {
             <HandymanIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1, color: "#1a73e8" }} />
             <Typography
               variant="h6"
+              // src=
               component={RouterLink}
               to="/"
               sx={{
@@ -93,7 +99,7 @@ function Navbar() {
                 textDecoration: "none",
               }}
             >
-              ServiceHub
+              LocalService
             </Typography>
 
             <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
