@@ -2,6 +2,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { Bounce, toast } from "react-toastify";
 
 export const AddUser = () => {
   const navigate = useNavigate();
@@ -16,8 +17,20 @@ export const AddUser = () => {
     try {
       const res = await axios.post("/user1", data);
       alert("User added successfully!");
-      navigate("/viewuser");
-      console.log(res.data.data);
+      navigate("/admin/viewuser");
+      console.log(res);
+
+      toast.success("User added Successful!", {
+                position: "top-center",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                theme: "colored",
+                transition: Bounce,
+              });
+
     } catch (error) {
       console.log(error);
       alert("Failed to add user");

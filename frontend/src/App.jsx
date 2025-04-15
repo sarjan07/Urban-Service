@@ -60,6 +60,14 @@ import { ViewUser } from "./components/admin/ViewUser";
 import UserPage from "./components/user/UserPage";
 import EasyBooking from "./components/user/EasyBooking";
 import { AddUser } from "./components/admin/AddUser";
+import { Category } from "@mui/icons-material";
+import SubCategory from "./components/admin/SubCategory";
+import BookingHistory from "./components/user/Menu/BookingHistory";
+import PayHistory from "./components/user/Menu/PaymentHistory";
+import ServiceBooking from "./components/user/Menu/ServiceBooking";
+import AddCategory from "./components/admin/Category";
+import AddSubCategory from "./components/admin/SubCategory";
+import ManageCat from "./components/admin/ManageCat";
 
 // Create contexts
 export const AuthContext = createContext();
@@ -195,7 +203,7 @@ function App() {
                         <Route path="services" element={<Services />} >
                         </Route>
                       </Route>
-                          <Route path="add" element={<AddService />} />
+
                     {/* </Route> */}
                     {/* <Route path="/user" element={<Home/>}>
                     </Route> */}
@@ -207,15 +215,20 @@ function App() {
                     </Route>
 
                     {/* Protected User Routes */}
-                    <Route path="/user">
+                    <Route path="/user" element={<Home/>}>
                     <Route path="manage" element={<ManageServices />} />
                     <Route path="profile" element={<Profile />} />
                     <Route path="settings" element={<Settings />} />
                     <Route path="booking" element={<EasyBooking/>}/>
+                      <Route path="menu">
+                        <Route path="history" element={<BookingHistory/>}/>
+                        <Route path="payhistory" element={<PayHistory/>}/>
+                        <Route path="serbook" element={<ServiceBooking/>}/>
+                      </Route>
                     </Route>
 
                     {/* Protected dashboard route */}
-                    {/* <Route path="/dashboard" element={<Home1 />} /> */}
+                    <Route path="/dashboard" element={<Home1 />} />
 
                     {/* 404 Route */}
                     <Route path="*" element={<NotFound />} />
@@ -228,10 +241,14 @@ function App() {
 
                     {/* Admin Sidebar & Navbar */}
                     <Route path="/admin" element={<AdminSidebar/>}>
+                      <Route path="add" element={<AddService />} />
+                      <Route path="adduser" element={<AddUser/>}></Route>
                       <Route path="edituser" element={<EditUser/>}></Route>
                       <Route path="viewuser" element={<ViewUser/>}></Route>
                       <Route path="profile" element={<Profile/>}></Route>
-                      <Route path="adduser" element={<AddUser/>}></Route>
+                      <Route path="category" element={<AddCategory/>} />
+                      <Route path="subcategory" element={<AddSubCategory/>}/>
+                      <Route path="managecat" element={<ManageCat/>}></Route>
                     </Route>
 
                     <Route path="/use" element={<UserPage/>}>

@@ -7,13 +7,13 @@ import AdminHeader from "./AdminHeader";
 const AdminSidebar = () => {
   return (
     <>
-    <AdminHeader></AdminHeader>
+    {/* <AdminHeader></AdminHeader> */}
     <aside
         className="app-sidebar bg-body-secondary shadow"
         data-bs-theme="dark">
           
         <div className="sidebar-brand">
-          <a href="./index.html" className="brand-link">
+          <Link to="/dashboard" className="brand-link">
             
             <img
               src="https://c8.alamy.com/comp/2H7NTHX/urban-logo-template-city-skyline-silhouette-vector-2H7NTHX.jpg"
@@ -21,8 +21,8 @@ const AdminSidebar = () => {
               height={"15px"}
               className="brand-image opacity-75 shadow"/>
             
-            <span className="brand-text fw-light">Urban Services</span>
-          </a>
+            <span className="brand-text fw-light">Local Services</span>
+          </Link>
           
         </div>
 
@@ -44,14 +44,14 @@ const AdminSidebar = () => {
               data-lte-toggle="treeview"
               role="menu"
               data-accordion="false">
-              <li className="nav-item menu-open">
-                <a href="#" className="nav-link active">
+              <Link to="nav-item menu-open">
+                {/* <Link to="#" className="nav-link active">
                   <i className="nav-icon bi bi-speedometer" />
                   <p>
                     Dashboard
                     <i className="nav-arrow bi bi-chevron-right" />
                   </p>
-                </a>
+                </Link> */}
                 <ul className="nav nav-treeview">
                   <li className="nav-item">
                     <Link to="/admin/add" className="nav-link active">
@@ -60,24 +60,36 @@ const AdminSidebar = () => {
                     </Link>
                   </li>
                   <li className="nav-item">
-                    <a href="./index2.html" className="nav-link">
+                    <Link to="/admin/category" className="nav-link">
                       <i className="nav-icon bi bi-circle" />
-                      <p>Edit Services</p>
-                    </a>
+                      <p>Add Category</p>
+                    </Link>
                   </li>
                   <li className="nav-item">
-                    <a href="./index3.html" className="nav-link">
+                    <Link to="/admin/subcategory" className="nav-link">
+                      <i className="nav-icon bi bi-circle" />
+                      <p>Add SubCategory</p>
+                    </Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link to="/admin/managecat" className="nav-link">
+                      <i className="nav-icon bi bi-circle" />
+                      <p>Manage Category</p>
+                    </Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link to="/admin/adduser" className="nav-link">
                       <i className="nav-icon bi bi-circle" />
                       <p>Add User</p>
-                    </a>
+                    </Link>
                   </li>
                 </ul>
-              </li>
+              </Link>
               <li className="nav-item">
-                <a href="/admin/edituser" className="nav-link">
+                <Link to="/admin/edituser" className="nav-link">
                   <i className="nav-icon bi bi-palette" />
                   <p>Edit User</p>
-                </a>
+                </Link>
               </li>
               <li className="nav-item">
                 <Link to="/admin/viewuser" className="nav-link">

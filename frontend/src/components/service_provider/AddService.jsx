@@ -23,10 +23,6 @@ const AddService = () => {
   const [areas, setAreas] = useState([]);
 
   useEffect(() => {
-    // axios.get("/allsubcategory").then((res) => setSubcategories(res.data.data));
-    // axios.get("/states").then((res) => setStates(res.data.data));
-    // axios.get(`/getcitybystate/stateId`).then((res) => setCities(res.data.data));
-    // axios.get("/allareas").then((res) => setAreas(res.data.data));
     getAllCategory();
     getAllState();
   }, []);

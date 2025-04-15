@@ -28,7 +28,24 @@ const getAllCategory =async (req, res) =>{
     }
 }
 
+const deleteCategoryById =async (req, res) =>{
+    try{
+        const delcategory = await categoryModel.find().populate("categoryId");
+        res.status(200).json({
+            message: "Delete Category Successfully",
+            data: delcategory,
+          });
+
+    }catch(err) {
+        res.status(500).json({
+            message:"Delete category failed...",
+            // data: delCategory,
+        });
+    }
+}
+
 module.exports = {
     addCategory,
-    getAllCategory
+    getAllCategory,
+    deleteCategoryById
 };

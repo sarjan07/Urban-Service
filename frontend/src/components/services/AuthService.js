@@ -99,7 +99,7 @@ const AuthService = {
 
   updateProfile: async (userData) => {
     try {
-      const response = await api.put('/auth/profile', userData);
+      const response = await api.put('/user/profile', userData);
       localStorage.setItem('user', JSON.stringify(response.data));
       return response.data;
     } catch (error) {
@@ -110,23 +110,23 @@ const AuthService = {
     }
   },
 
-  changePassword: async (currentPassword, newPassword) => {
-    try {
-      await api.put('/auth/change-password', {
-        currentPassword,
-        newPassword,
-      });
-    } catch (error) {
-      if (error.response?.data?.message) {
-        throw new Error(error.response.data.message);
-      }
-      throw new Error('Password change failed. Please try again.');
-    }
-  },
+  // changePassword: async (currentPassword, newPassword) => {
+  //   try {
+  //     await api.post('/user/resetpassword', {
+  //       currentPassword,
+  //       newPassword,
+  //     });
+  //   } catch (error) {
+  //     if (error.response?.data?.message) {
+  //       throw new Error(error.response.data.message);
+  //     }
+  //     throw new Error('Password change failed. Please try again.');
+  //   }
+  // },
 
   forgotPassword: async (email) => {
     try {
-      await api.post('/auth/forgot-password', { email });
+      await api.post('/user/forgotpassword', { email });
     } catch (error) {
       if (error.response?.data?.message) {
         throw new Error(error.response.data.message);
@@ -137,7 +137,7 @@ const AuthService = {
 
   resetPassword: async (token, newPassword) => {
     try {
-      await api.post('/auth/reset-password', { token, newPassword });
+      await api.post('/user/resetpassword', { token, newPassword });
     } catch (error) {
       if (error.response?.data?.message) {
         throw new Error(error.response.data.message);

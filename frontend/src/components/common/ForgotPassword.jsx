@@ -77,7 +77,7 @@ function ForgotPassword() {
           progress: undefined,
         });
         // Navigate to reset password page with email
-        navigate('/reset-password', { state: { email } });
+        navigate('/resetpassword', { state: { email } });
       } else {
         throw new Error('Invalid OTP');
       }

@@ -88,10 +88,12 @@ const addUser = async(req,res) =>{
 const deleteUser = async(req,res) =>{
     const deletedUser = await User.findByIdAndDelete(req.params.id)
 
-    res.json({
-        message:"user deleted Sucessfully...",
-        data:deletedUser
-    });
+    try {
+      await User.findByIdAndDelete(req.params.id);
+      res.status(200).json({ message: 'User deleted successfully' });
+    } catch (error) {
+      res.status(500).json({ message: 'Error deleting user' });
+    }
 };
 
 const getUserById = async(req,res) =>{

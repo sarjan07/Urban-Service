@@ -10,6 +10,6 @@ routes.get("/user/:id",userController.getUserById)
 routes.put("/edituser",userController.updateUser)
 routes.post("/user/forgotpassword",userController.forgotPassword)
 routes.post("/user/resetpassword",userController.resetPassword)
-routes.delete("/deleteuser/",userController.deleteUser)
+routes.delete("/deleteuserbyuserid/:userid",userController.deleteUser)
 
 module.exports = routes

@@ -4,12 +4,12 @@ const Schema = mongoose.Schema;
 const UserSchema =new Schema({
     name:{
         type:String,
-        required: true,
+        // required: true,
     },
 
-    status:{
-        type:Boolean,
-        default: "Active"
+    status:{ 
+        type: String,
+        enum: ["True", "False"]
     },
 
     roleId:{
