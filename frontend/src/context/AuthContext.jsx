@@ -1,4 +1,5 @@
-import { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import AuthService from '../components/services/AuthService';
 
 const AuthContext = createContext(null);
@@ -6,64 +7,42 @@ const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        if (AuthService.isAuthenticated()) {
-          const userData = await AuthService.getCurrentUserFromServer();
-          setUser(userData);
-        }
-      } catch (error) {
-        console.error('Auth check failed:', error);
-        AuthService.logout();
-      } finally {
-        setLoading(false);
-      }
-    };
-
     checkAuth();
   }, []);
 
-  const login = async (credentials) => {
+  const checkAuth = async () => {
     try {
-      const response = await AuthService.login(credentials);
-      setUser(response.user);
-      return response;
+      const userData = await AuthService.getCurrentUser();
+      setUser(userData);
     } catch (error) {
-      throw error;
+      setUser(null);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const register = async (userData) => {
-    try {
-      const response = await AuthService.register(userData);
-      setUser(response.user);
-      return response;
-    } catch (error) {
-      throw error;
-    }
+  const login = (userData) => {
+    setUser(userData);
   };
 
   const logout = () => {
     AuthService.logout();
     setUser(null);
+    navigate('/login');
   };
 
   const value = {
     user,
     loading,
     login,
-    register,
     logout,
-    isAuthenticated: AuthService.isAuthenticated,
+    isAuthenticated: !!user,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {!loading && children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => {

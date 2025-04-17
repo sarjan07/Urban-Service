@@ -5,29 +5,57 @@ const mailUtil = require("../utili/MailUtil")
 const jwt = require("jsonwebtoken")
 const secret = "your sceret key"
 
-const loginUser =async(req,res) =>{
-    const email = req.body.email;
-    const password = req.body.password;
+const loginUser = async (req, res) => {
+    try {
+        const { email, password } = req.body;
 
-    const foundUserFromEmail = await User.find({email:req.body.email});
-    console.log(foundUserFromEmail);
-
-    if (foundUserFromEmail != null) {
-        const isMatch =bcrypt.compareSync(password, foundUserFromEmail.password);
-
-        if (isMatch == true) {
-            res.status(200).json({
-                message:"Login Successfully",
-                data:foundUserFromEmail,
+        // Find user by email
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(401).json({
+                success: false,
+                message: "Invalid email or password"
             });
-         } else{
-                res.status(405).json({
-                    message:"Email is not valid...",
-                });
+        }
+
+        // Compare password
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(401).json({
+                success: false,
+                message: "Invalid email or password"
+            });
+        }
+
+        // Generate JWT token
+        const token = jwt.sign(
+            { userId: user._id, email: user.email },
+            secret,
+            { expiresIn: '24h' }
+        );
+
+        // Return success response with token and user data
+        res.status(200).json({
+            success: true,
+            message: "Login successful",
+            token,
+            user: {
+                _id: user._id,
+                email: user.email,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                role: user.role
             }
-        };
-        
-}
+        });
+    } catch (error) {
+        console.error('Login error:', error);
+        res.status(500).json({
+            success: false,
+            message: "An error occurred during login"
+        });
+    }
+};
+
 const signUp = async (req, res) => {
     console.log("Req body : ",req.body);
     try {

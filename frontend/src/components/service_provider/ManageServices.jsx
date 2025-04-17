@@ -115,7 +115,7 @@ const ManageServices = () => {
 
   // ✅ DELETE SERVICE
   const handleDeleteService = async (serviceId) => {
-    if (!window.confirm("Are you sure you want to delete this service?")) return;
+    // if (!window.confirm("Are you sure you want to delete this service?")) return;
 
     try {
       await axios.delete(`http://localhost:4000/allservices/${serviceId}`);

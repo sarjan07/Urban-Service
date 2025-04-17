@@ -1,538 +1,147 @@
-import { useState } from "react";
-import { useNavigate, Link as RouterLink } from "react-router-dom";
-import { useForm, Controller } from "react-hook-form";
-import axios from "axios";
+import React, { useState } from 'react';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import {
   Container,
   Box,
   Typography,
   TextField,
   Button,
-  Link,
   Paper,
   Alert,
   CircularProgress,
   useTheme,
-} from "@mui/material";
-import { toast, ToastContainer, Bounce } from "react-toastify";
+} from '@mui/material';
+import { toast } from 'react-toastify';
+import AuthService from '../services/AuthService';
+import { useAuth } from '../../context/AuthContext';
 
-function Login() {
-  const navigate = useNavigate();
-  const theme = useTheme();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [role, setRole] = useState("user"); // Default role
-
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
-    defaultValues: {
-      email: "",
-      password: "",
-    },
+const Login = () => {
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
+  const location = useLocation();
+  const theme = useTheme();
+  const { login } = useAuth();
 
-  const submitHandler = async (data) => {
-    // const role="User"
-    // setLoading(true);
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+
     try {
-      const res = await axios.post("/user/login", {
-        // Changed endpoint to /login
-        email: data.email,
-        password: data.password,
-      });
-      console.log("response : ", res.data);
-
-      // localStorage.setItem("token", res.data.token);
-      localStorage.setItem("id", res.data._id);
-      localStorage.setItem("role", role);
-      if (res?.status === 200) {
-        toast.success("Login Successful!", {
-          position: "top-center",
-          autoClose: 2000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          theme: "colored",
-          transition: Bounce,
-        });
-
-        setTimeout(() => {
-          if (role === "admin") {
-            navigate("/admin/dashboard");
-          } else if (role === "service-provider") {
-            navigate("/serv_pro/dashboard");
-          } else {
-            navigate("/");
-          }
-        }, 2000);
-      }
-    } catch (err) {
-      setError(err.response?.data?.message || "Invalid email or password");
-      toast.error(err.response?.data?.message || "Invalid email or password", {
-        position: "top-center",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        theme: "light",
-        transition: Bounce,
-      });
+      const response = await AuthService.login(formData);
+      login(response.user);
+      toast.success('Login successful!');
+      
+      // Redirect to the intended page or dashboard
+      const from = location.state?.from?.pathname || '/dashboard';
+      navigate(from, { replace: true });
+    } catch (error) {
+      setError(error.message || 'Login failed. Please check your credentials.');
+      toast.error(error.message || 'Login failed. Please check your credentials.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <>
-      <Container maxWidth="sm">
-        <Box
+    <Container component="main" maxWidth="xs">
+      <Box
+        sx={{
+          marginTop: 8,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
+        <Paper
+          elevation={3}
           sx={{
-            mt: 8,
-            mb: 4,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
+            padding: 4,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            width: '100%',
           }}
         >
-          <Paper
-            elevation={3}
-            sx={{
-              p: 4,
-              width: "100%",
-              borderRadius: 2,
-              boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
-            }}
-          >
-            <Typography
-              component="h1"
-              variant="h4"
-              align="center"
-              gutterBottom
-              sx={{
-                fontWeight: 700,
-                color: theme.palette.primary.main,
-                mb: 3,
-              }}
+          <Typography component="h1" variant="h5">
+            Sign in
+          </Typography>
+          {error && (
+            <Alert severity="error" sx={{ mt: 2, width: '100%' }}>
+              {error}
+            </Alert>
+          )}
+          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1, width: '100%' }}>
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="email"
+              label="Email Address"
+              name="email"
+              autoComplete="email"
+              autoFocus
+              value={formData.email}
+              onChange={handleChange}
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Password"
+              type="password"
+              id="password"
+              autoComplete="current-password"
+              value={formData.password}
+              onChange={handleChange}
+            />
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+              disabled={loading}
             >
-              Login
-            </Typography>
-
-            {error && (
-              <Alert severity="error" sx={{ mb: 3 }}>
-                {error}
-              </Alert>
-            )}
-
-            <Box
-              component="form"
-              onSubmit={handleSubmit(submitHandler)}
-              noValidate
-            >
-              <Controller
-                name="email"
-                control={control}
-                rules={{
-                  required: "Email is required",
-                  pattern: {
-                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                    message: "Invalid email address",
-                  },
-                }}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    margin="normal"
-                    required
-                    fullWidth
-                    id="email"
-                    label="Email Address"
-                    autoComplete="email"
-                    autoFocus
-                    disabled={loading}
-                    error={!!errors.email}
-                    helperText={errors.email?.message}
-                    sx={{ mb: 2 }}
-                  />
-                )}
-              />
-
-              <Controller
-                name="password"
-                control={control}
-                rules={{
-                  required: "Password is required",
-                  minLength: {
-                    value: 6,
-                    message: "Password must be at least 6 characters",
-                  },
-                }}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    margin="normal"
-                    required
-                    fullWidth
-                    name="password"
-                    label="Password"
-                    type="password"
-                    id="password"
-                    autoComplete="current-password"
-                    disabled={loading}
-                    error={!!errors.password}
-                    helperText={errors.password?.message}
-                    sx={{ mb: 3 }}
-                  />
-                )}
-              />
-
-              {/* Role selection dropdown */}
-              <TextField
-                select
-                label="Role"
-                value={role}
-                onChange={(e) => setRole(e.target.value)}
-                fullWidth
-                margin="normal"
-                SelectProps={{
-                  native: true,
-                }}
-                sx={{ mb: 2 }}
-              >
-                <option value="user">User</option>
-                <option value="admin">Admin</option>
-                <option value="service-provider">Service Provider</option>
-              </TextField>
-
-              <Box
-                sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}
-              >
-                <Box sx={{ display: "flex", alignItems: "center" }}>
-                  <input type="checkbox" id="remember" />
-                  <label htmlFor="remember" style={{ marginLeft: "8px" }}>
-                    Remember Me
-                  </label>
-                </Box>
-                <Link
-                  component={RouterLink}
-                  to="/forgot-password"
-                  variant="body2"
-                  sx={{
-                    color: theme.palette.primary.main,
-                    textDecoration: "none",
-                    "&:hover": {
-                      textDecoration: "underline",
-                    },
-                  }}
-                >
-                  Forgot Password?
-                </Link>
-              </Box>
-
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                size="large"
-                disabled={loading}
-                sx={{
-                  py: 1.5,
-                  mb: 2,
-                  background: `linear-gradient(45deg, ${theme.palette.primary.main} 30%, ${theme.palette.primary.light} 90%)`,
-                  "&:hover": {
-                    background: `linear-gradient(45deg, ${theme.palette.primary.dark} 30%, ${theme.palette.primary.main} 90%)`,
-                  },
+              {loading ? <CircularProgress size={24} /> : 'Sign In'}
+            </Button>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+              <Link
+                to="/forgot-password"
+                style={{
+                  textDecoration: 'none',
+                  color: theme.palette.primary.main,
                 }}
               >
-                {loading ? (
-                  <CircularProgress size={24} color="inherit" />
-                ) : (
-                  "Login"
-                )}
-              </Button>
-
-              <Box sx={{ textAlign: "center" }}>
-                <Link
-                  component={RouterLink}
-                  to="/signup"
-                  variant="body2"
-                  sx={{
-                    color: theme.palette.primary.main,
-                    textDecoration: "none",
-                    "&:hover": {
-                      textDecoration: "underline",
-                    },
-                  }}
-                >
-                  Don't have an account? Sign Up
-                </Link>
-              </Box>
+                Forgot password?
+              </Link>
+              <Link
+                to="/signup"
+                style={{
+                  textDecoration: 'none',
+                  color: theme.palette.primary.main,
+                }}
+              >
+                Don't have an account? Sign Up
+              </Link>
             </Box>
-          </Paper>
-        </Box>
-      </Container>
-      <ToastContainer />
-    </>
+          </Box>
+        </Paper>
+      </Box>
+    </Container>
   );
-}
+};
 
 export default Login;
-
-// import { useContext, useState } from 'react';
-// import { useNavigate, Link as RouterLink } from 'react-router-dom';
-// import { useForm, Controller } from 'react-hook-form';
-// import {
-//   Container,
-//   Box,
-//   Typography,
-//   TextField,
-//   Button,
-//   Link,
-//   Paper,
-//   Alert,
-//   CircularProgress,
-//   useTheme,
-// } from '@mui/material';
-// import { useAuth } from '../../context/AuthContext';
-// import { Bounce, toast, ToastContainer } from 'react-toastify';
-
-// function Login() {
-//   const { login } = useAuth();
-//   const navigate = useNavigate();
-//   const theme = useTheme();
-//   const [loading, setLoading] = useState(false);
-//   const [error, setError] = useState('');
-
-//   const {
-//     control,
-//     handleSubmit,
-//     formState: { errors },
-//   } = useForm({
-//     defaultValues: {
-//       email: '',
-//       password: '',
-//     },
-//   });
-
-//   const submitHandler = async (data) => {
-
-//     try {
-//       const res = await axios.post("/user", {
-//         email: data.email,
-//         password: data.password,
-//         role, // Include role in the request
-//       });
-
-//       if (res.status === 200 && res.data.token) {
-//         // Store the token and user info
-//         localStorage.setItem("token", res.data.token);
-//         localStorage.setItem("id", res.data.user.id);
-//         localStorage.setItem("role", role); // Store selected role
-
-//         toast.success("Login Successful!", {
-//           position: "top-center",
-//           autoClose: 2000,
-//           hideProgressBar: false,
-//           closeOnClick: true,
-//           pauseOnHover: true,
-//           draggable: true,
-//           theme: "colored",
-//           transition: Bounce,
-//         });
-
-//         setTimeout(() => {
-//           // Redirect based on role
-//           if (role === "admin") {
-//             navigate("/admin/dashboard");
-//           } else if (role === "service-provider"){
-//             navigate("/serv_pro/dashboard");
-//           } else {
-//             navigate("/user/dashboard")
-//           }
-//         }, 2000);
-//       }
-//     } catch (err) {
-//       toast.error(
-//         err.response?.data?.message || "Invalid email or password",
-//         {
-//           position: "top-center",
-//           autoClose: 3000,
-//           hideProgressBar: false,
-//           closeOnClick: true,
-//           pauseOnHover: true,
-//           draggable: true,
-//           theme: "light",
-//           transition: Bounce,
-//         }
-//       );
-//     }
-//   };
-
-//   return (
-//     <>
-//     <Container maxWidth="sm">
-//       <Box
-//         sx={{
-//           mt: 8,
-//           mb: 4,
-//           display: 'flex',
-//           flexDirection: 'column',
-//           alignItems: 'center',
-//         }}
-//       >
-//         <Paper
-//           elevation={3}
-//           sx={{
-//             p: 4,
-//             width: '100%',
-//             borderRadius: 2,
-//             boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-//           }}
-//         >
-//           <Typography
-//             component="h1"
-//             variant="h4"
-//             align="center"
-//             gutterBottom
-//             sx={{
-//               fontWeight: 700,
-//               color: theme.palette.primary.main,
-//               mb: 3,
-//             }}
-//           >
-//             Login
-//           </Typography>
-
-//           {error && (
-//             <Alert severity="error" sx={{ mb: 3 }}>
-//               {error}
-//             </Alert>
-//           )}
-
-//           <Box component="form" onSubmit={handleSubmit(submitHandler)} noValidate>
-//             <Controller
-//               name="email"
-//               control={control}
-//               rules={{
-//                 required: 'Email is required',
-//                 pattern: {
-//                   value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-//                   message: 'Invalid email address',
-//                 },
-//               }}
-//               render={({ field }) => (
-//                 <TextField
-//                   {...field}
-//                   margin="normal"
-//                   required
-//                   fullWidth
-//                   id="email"
-//                   label="Email Address"
-//                   autoComplete="email"
-//                   autoFocus
-//                   disabled={loading}
-//                   error={!!errors.email}
-//                   helperText={errors.email?.message}
-//                   sx={{ mb: 2 }}
-//                 />
-//               )}
-//             />
-
-//             <Controller
-//               name="password"
-//               control={control}
-//               rules={{
-//                 required: 'Password is required',
-//                 minLength: {
-//                   value: 6,
-//                   message: 'Password must be at least 6 characters',
-//                 },
-//               }}
-//               render={({ field }) => (
-//                 <TextField
-//                   {...field}
-//                   margin="normal"
-//                   required
-//                   fullWidth
-//                   name="password"
-//                   label="Password"
-//                   type="password"
-//                   id="password"
-//                   autoComplete="current-password"
-//                   disabled={loading}
-//                   error={!!errors.password}
-//                   helperText={errors.password?.message}
-//                   sx={{ mb: 3 }}
-//                 />
-//               )}
-//             />
-
-//             <div className="remember-forgot">
-//               <div className="remember-me">
-//                 <input type="checkbox" id="remember" />
-//                 <label htmlFor="remember">Remember Me</label>
-//               </div>
-//               <Link
-//                 component={RouterLink}
-//                 to="/forgot-password"
-//                 variant="body2"
-//                 sx={{
-//                   color: theme.palette.primary.main,
-//                   textDecoration: 'none',
-//                   '&:hover': {
-//                     textDecoration: 'underline',
-//                   },
-//                 }}
-//               >
-//                 Forgot Password?
-//               </Link>
-//             </div>
-
-//             <Button
-//               type="submit"
-//               fullWidth
-//               variant="contained"
-//               size="large"
-//               disabled={loading}
-//               sx={{
-//                 py: 1.5,
-//                 mb: 2,
-//                 background: `linear-gradient(45deg, ${theme.palette.primary.main} 30%, ${theme.palette.primary.light} 90%)`,
-//                 '&:hover': {
-//                   background: `linear-gradient(45deg, ${theme.palette.primary.dark} 30%, ${theme.palette.primary.main} 90%)`,
-//                 },
-//               }}
-//             >
-//               {loading ? <CircularProgress size={24} color="inherit" /> : 'Login'}
-//             </Button>
-
-//             <Box sx={{ textAlign: 'center' }}>
-//               <Link
-//                 component={RouterLink}
-//                 to="/signup"
-//                 variant="body2"
-//                 sx={{
-//                   color: theme.palette.primary.main,
-//                   textDecoration: 'none',
-//                   '&:hover': {
-//                     textDecoration: 'underline',
-//                   },
-//                 }}
-//               >
-//                 Don't have an account? Sign Up
-//               </Link>
-//             </Box>
-//           </Box>
-//         </Paper>
-//       </Box>
-//     </Container>
-//     <ToastContainer/>
-//     </>
-//   );
-// }
-
-// export default Login;

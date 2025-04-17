@@ -1,298 +1,350 @@
-import React from "react";
-// import { UserNavbar } from "./UserNavbar";
-import { Link, Outlet } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
 import AdminHeader from "./AdminHeader";
-// import AdminLTEFullLogo from "./assets/css/AdminLTEFullLogo";
+import {
+  Box,
+  Drawer,
+  AppBar,
+  Toolbar,
+  List,
+  Typography,
+  Divider,
+  IconButton,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Avatar,
+  Menu,
+  MenuItem,
+  useTheme,
+  useMediaQuery,
+  Collapse,
+  Tooltip,
+} from '@mui/material';
+import {
+  Menu as MenuIcon,
+  ChevronLeft as ChevronLeftIcon,
+  Dashboard as DashboardIcon,
+  People as PeopleIcon,
+  Category as CategoryIcon,
+  SubdirectoryArrowRight as SubCategoryIcon,
+  Settings as SettingsIcon,
+  Logout as LogoutIcon,
+  ExpandLess as ExpandLessIcon,
+  ExpandMore as ExpandMoreIcon,
+  AdminPanelSettings as AdminIcon,
+  PersonAdd as PersonAddIcon,
+  Group as GroupIcon,
+  Add as AddIcon,
+} from '@mui/icons-material';
+import { useAuth } from '../../context/AuthContext';
+import { styled } from '@mui/material/styles';
+
+const drawerWidth = 240;
+
+const StyledDrawer = styled(Drawer)(({ theme }) => ({
+  width: drawerWidth,
+  flexShrink: 0,
+  '& .MuiDrawer-paper': {
+    width: drawerWidth,
+    boxSizing: 'border-box',
+    background: `linear-gradient(180deg, ${theme.palette.background.paper} 0%, ${theme.palette.background.default} 100%)`,
+    borderRight: `1px solid ${theme.palette.divider}`,
+    transition: theme.transitions.create(['width', 'margin'], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+    [theme.breakpoints.down('md')]: {
+      width: 0,
+      borderRight: 'none',
+    },
+  },
+}));
+
+const StyledListItemButton = styled(ListItemButton)(({ theme }) => ({
+  margin: '4px 8px',
+  borderRadius: theme.shape.borderRadius,
+  '&:hover': {
+    backgroundColor: theme.palette.action.hover,
+  },
+  '&.Mui-selected': {
+    backgroundColor: `${theme.palette.primary.main}15`,
+    '&:hover': {
+      backgroundColor: `${theme.palette.primary.main}25`,
+    },
+    '& .MuiListItemIcon-root': {
+      color: theme.palette.primary.main,
+    },
+    '& .MuiListItemText-primary': {
+      color: theme.palette.primary.main,
+      fontWeight: 600,
+    },
+  },
+}));
 
 const AdminSidebar = () => {
-  return (
-    <>
-    {/* <AdminHeader></AdminHeader> */}
-    <aside
-        className="app-sidebar bg-body-secondary shadow"
-        data-bs-theme="dark">
-          
-        <div className="sidebar-brand">
-          <Link to="/dashboard" className="brand-link">
-            
-            <img
-              src="https://c8.alamy.com/comp/2H7NTHX/urban-logo-template-city-skyline-silhouette-vector-2H7NTHX.jpg"
-              // alt="AdminLTE Logo" 
-              height={"15px"}
-              className="brand-image opacity-75 shadow"/>
-            
-            <span className="brand-text fw-light">Local Services</span>
-          </Link>
-          
-        </div>
+  const theme = useTheme();
+  const location = useLocation();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [categoryOpen, setCategoryOpen] = useState(false);
+  const [userOpen, setUserOpen] = useState(false);
+  const { logout } = useAuth();
+  const navigate = useNavigate();
 
-        <div className="" data-overlayscrollbars-viewport="scrollbarHidden overflowXHidden overflowYScroll" tabIndex={-1}
-          style={{
-            marginRight: "-16px",
-            marginBottom: "-16px",
-            marginLeft: 0,
-            top: "-8px",
-            right: "auto",
-            left: "-8px",
-            width: "calc(100% + 16px)",
-            padding: 8,
-          }}>
-          <nav className="mt-2">
-            
-            <ul
-              className="nav sidebar-menu flex-column"
-              data-lte-toggle="treeview"
-              role="menu"
-              data-accordion="false">
-              <Link to="nav-item menu-open">
-                {/* <Link to="#" className="nav-link active">
-                  <i className="nav-icon bi bi-speedometer" />
-                  <p>
-                    Dashboard
-                    <i className="nav-arrow bi bi-chevron-right" />
-                  </p>
-                </Link> */}
-                <ul className="nav nav-treeview">
-                  <li className="nav-item">
-                    <Link to="/admin/add" className="nav-link active">
-                      <i className="nav-icon bi bi-circle" />
-                      <p>Add Services</p>
-                    </Link>
-                  </li>
-                  <li className="nav-item">
-                    <Link to="/admin/category" className="nav-link">
-                      <i className="nav-icon bi bi-circle" />
-                      <p>Add Category</p>
-                    </Link>
-                  </li>
-                  <li className="nav-item">
-                    <Link to="/admin/subcategory" className="nav-link">
-                      <i className="nav-icon bi bi-circle" />
-                      <p>Add SubCategory</p>
-                    </Link>
-                  </li>
-                  <li className="nav-item">
-                    <Link to="/admin/managecat" className="nav-link">
-                      <i className="nav-icon bi bi-circle" />
-                      <p>Manage Category</p>
-                    </Link>
-                  </li>
-                  <li className="nav-item">
-                    <Link to="/admin/adduser" className="nav-link">
-                      <i className="nav-icon bi bi-circle" />
-                      <p>Add User</p>
-                    </Link>
-                  </li>
-                </ul>
-              </Link>
-              <li className="nav-item">
-                <Link to="/admin/edituser" className="nav-link">
-                  <i className="nav-icon bi bi-palette" />
-                  <p>Edit User</p>
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link to="/admin/viewuser" className="nav-link">
-                  <i className="nav-icon bi bi-box-seam-fill" />
-                  <p>
-                    View User
-                    <i className="nav-arrow bi bi-chevron-right" />
-                  </p>
-                </Link>
-                
-              </li>
-            </ul>
-            
-          </nav>
-        </div>
-      </aside>
-      <main className="app-main">
-        <Outlet/>
-      </main>
-    </>
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
+
+  const handleCategoryClick = () => {
+    setCategoryOpen(!categoryOpen);
+  };
+
+  const handleUserClick = () => {
+    setUserOpen(!userOpen);
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
+  const menuItems = [
+    {
+      text: 'Dashboard',
+      icon: <DashboardIcon />,
+      path: '/admin/dashboard',
+    },
+    {
+      text: 'Categories',
+      icon: <CategoryIcon />,
+      children: [
+        {
+          text: 'Add Category',
+          icon: <AddIcon />,
+          path: '/admin/category',
+        },
+        {
+          text: 'Add SubCategories',
+          icon: <CategoryIcon />,
+          path: '/admin/subcategory',
+        },
+      ],
+    },
+    {
+      text: 'Users',
+      icon: <PeopleIcon />,
+      children: [
+        {
+          text: 'Add User',
+          icon: <PersonAddIcon />,
+          path: '/admin/adduser',
+        },
+        {
+          text: 'Manage Users',
+          icon: <GroupIcon />,
+          path: '/admin/edituser',
+        },
+        {
+          text: 'Add Admin',
+          icon: <AdminIcon />,
+          path: '/admin/addadmin',
+        },
+      ],
+    },
+    {
+      text: 'Settings',
+      icon: <SettingsIcon />,
+      path: '/admin/settings',
+    },
+  ];
+
+  const renderMenuItem = (item) => {
+    const isSelected = location.pathname === item.path;
+    const hasChildren = item.children && item.children.length > 0;
+    const isParentSelected = hasChildren && item.children.some(child => location.pathname === child.path);
+
+    if (hasChildren) {
+      return (
+        <React.Fragment key={item.text}>
+          <ListItem disablePadding>
+            <StyledListItemButton
+              onClick={item.text === 'Categories' ? handleCategoryClick : handleUserClick}
+              selected={isParentSelected}
+            >
+              <ListItemIcon sx={{ minWidth: 40 }}>
+                {item.icon}
+              </ListItemIcon>
+              <ListItemText primary={item.text} />
+              {item.text === 'Categories' ? (
+                categoryOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />
+              ) : (
+                userOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />
+              )}
+            </StyledListItemButton>
+          </ListItem>
+          <Collapse in={item.text === 'Categories' ? categoryOpen : userOpen} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              {item.children.map((child) => (
+                <ListItem key={child.text} disablePadding>
+                  <StyledListItemButton
+                    component={Link}
+                    to={child.path}
+                    selected={location.pathname === child.path}
+                    sx={{ pl: 4 }}
+                  >
+                    <ListItemIcon sx={{ minWidth: 40 }}>
+                      {child.icon}
+                    </ListItemIcon>
+                    <ListItemText primary={child.text} />
+                  </StyledListItemButton>
+                </ListItem>
+              ))}
+            </List>
+          </Collapse>
+        </React.Fragment>
+      );
+    }
+
+    return (
+      <ListItem key={item.text} disablePadding>
+        <StyledListItemButton
+          component={Link}
+          to={item.path}
+          selected={isSelected}
+        >
+          <ListItemIcon sx={{ minWidth: 40 }}>
+            {item.icon}
+          </ListItemIcon>
+          <ListItemText primary={item.text} />
+        </StyledListItemButton>
+      </ListItem>
+    );
+  };
+
+  const drawer = (
+    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+      <Box
+        sx={{
+          p: 2,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 2,
+          borderBottom: `1px solid ${theme.palette.divider}`,
+        }}
+      >
+        <Avatar
+          sx={{
+            bgcolor: theme.palette.primary.main,
+            width: 40,
+            height: 40,
+          }}
+        >
+          <AdminIcon />
+        </Avatar>
+        <Typography
+          variant="h6"
+          sx={{
+            fontWeight: 'bold',
+            background: `linear-gradient(45deg, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+          }}
+        >
+          Admin Panel
+        </Typography>
+      </Box>
+
+      <Box sx={{ flexGrow: 1, overflow: 'auto', py: 2 }}>
+        <List>
+          {menuItems.map(renderMenuItem)}
+        </List>
+      </Box>
+
+      <Divider />
+      
+      <Box sx={{ p: 2 }}>
+        <Typography variant="caption" color="text.secondary" align="center" display="block">
+          © 2024 Admin Panel
+        </Typography>
+      </Box>
+    </Box>
+  );
+
+  return (
+    <Box sx={{ display: 'flex', minHeight: '100vh' }}>
+      <AppBar
+        position="fixed"
+        sx={{
+          width: { sm: `calc(100% - ${drawerWidth}px)` },
+          ml: { sm: `${drawerWidth}px` },
+          transition: 'width 225ms, margin 225ms',
+          zIndex: (theme) => theme.zIndex.drawer + 1,
+        }}
+      >
+        <Toolbar>
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            onClick={handleDrawerToggle}
+            edge="start"
+            sx={{ mr: 2 }}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
+            Admin Dashboard
+          </Typography>
+          <IconButton
+            color="inherit"
+            onClick={handleLogout}
+            sx={{
+              '&:hover': {
+                backgroundColor: theme.palette.error.main + '20',
+              },
+            }}
+          >
+            <LogoutIcon />
+          </IconButton>
+        </Toolbar>
+      </AppBar>
+      <Box
+        component="nav"
+        sx={{
+          width: { md: drawerWidth },
+          flexShrink: { md: 0 },
+        }}
+      >
+        <StyledDrawer
+          variant={isMobile ? 'temporary' : 'permanent'}
+          open={isMobile ? mobileOpen : true}
+          onClose={handleDrawerToggle}
+          ModalProps={{
+            keepMounted: true,
+          }}
+        >
+          {drawer}
+        </StyledDrawer>
+      </Box>
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          p: 3,
+          width: { md: `calc(100% - ${drawerWidth}px)` },
+          ml: { md: `${drawerWidth}px` },
+          transition: theme.transitions.create(['margin', 'width'], {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.leavingScreen,
+          }),
+        }}
+      >
+        <Toolbar />
+        <Outlet />
+      </Box>
+    </Box>
   );
 };
 
 export default AdminSidebar;
-
-
-// import React, { useState } from "react";
-// import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
-// import { styled, useTheme } from "@mui/material/styles";
-// import {
-//   Drawer,
-//   List,
-//   ListItemButton,
-//   ListItemIcon,
-//   ListItemText,
-//   IconButton,
-//   Box,
-//   Typography,
-//   Divider,
-//   useMediaQuery,
-//   Toolbar,
-//   AppBar,
-// } from "@mui/material";
-// import {
-//   Dashboard,
-//   Event,
-//   Business,
-//   People,
-//   BarChart,
-//   Security,
-//   Settings,
-//   Menu,
-//   Logout,
-// } from "@mui/icons-material";
-// // import { ViewMyScreen } from "../ServiceProvider/ViewMyScreen";
-
-// const drawerWidth = 260;
-
-// const SidebarContainer = styled(Drawer)(({ theme }) => ({
-//   width: drawerWidth,
-//   flexShrink: 0,
-//   zIndex: 1400, // Higher z-index for visibility
-//   "& .MuiDrawer-paper": {
-//     width: drawerWidth,
-//     backgroundColor: "#1E1E1E",
-//     color: "#FFFFFF",
-//     borderRight: "1px solid #333",
-//     display: "flex",
-//     flexDirection: "column",
-//     justifyContent: "space-between",
-//     zIndex: 1400, // Ensures sidebar stays on top
-//   },
-// }));
-
-// const AdminSidebar = () => {
-//   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-//   const theme = useTheme();
-//   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-//   const navigate = useNavigate();
-//   const location = useLocation();
-
-//   const toggleSidebar = () => {
-//     setIsSidebarOpen(!isSidebarOpen);
-//   };
-
-//   const handleLogout = () => {
-//     localStorage.removeItem("authToken");
-//     navigate("/login");
-//   };
-
-//   const isActive = (path) => location.pathname.startsWith(path);
-
-//   const AdminNavLinks = [
-//     { path: "/admin/dashboard", icon: <Dashboard />, label: "Dashboard" },
-//     { path: "/admin/manage-users", icon: <People />, label: "User Management" },
-//     { path: "/admin/manage-services", icon: <Business />, label: "Service Management" },
-//     { path: "/admin/bookings", icon: <Event />, label: "Bookings" },
-//     { path: "/admin/revenue", icon: <Security />, label: "Revenue" },
-//     { path: "/admin/reports", icon: <BarChart />, label: "Reports & Analytics" },
-//     { path: "/admin/settings", icon: <Settings />, label: "Settings" },
-//   ];
-
-//   const ServiceProviderNavLinks = [
-//     { path: "/servid", icon: <Dashboard />, label: "Dashboard" },
-
-//     { path: "/admin/manage-events", icon: <Event />, label: "Booking" },
-//     { path: "/admin/manage-services", icon: <Event />, label: "Manage Services" },
-    
-//     { path: "/admin/reports-analytics", icon: <BarChart />, label: "Reports & Analytics" },
-//     { path: "/admin/content-moderation", icon: <Security />, label: "Revenue" },
-//     { path: "/admin/settings", icon: <Settings />, label: "Reviews" },
-//   ];
-
-  
-//   return (
-//     <Box display="flex">
-//       {/* Top Navbar for Mobile */}
-//       {isMobile && (
-//         <AppBar position="fixed" sx={{ bgcolor: "#222", zIndex: 1500 }}>
-//           <Toolbar>
-//             <IconButton onClick={toggleSidebar} sx={{ color: "#fff" }}>
-//               <Menu />
-//             </IconButton>
-//             <Typography variant="h6" sx={{ flexGrow: 1, textAlign: "center" }}>
-//               Local Service Admin
-//             </Typography>
-//           </Toolbar>
-//         </AppBar>
-//       )}
-
-//       {/* Sidebar */}
-//       <SidebarContainer
-//         variant={isMobile ? "temporary" : "permanent"}
-//         open={isSidebarOpen || !isMobile}
-//         onClose={toggleSidebar}
-//         ModalProps={{ keepMounted: true }}
-//       >
-//         <Box p={2} display="flex" justifyContent="space-between" alignItems="center">
-//           <Typography variant="h6" fontWeight="bold">
-//           Local Service Admin
-//           </Typography>
-//           {isMobile && (
-//             <IconButton onClick={toggleSidebar} sx={{ color: "inherit" }}>
-//               <Menu />
-//             </IconButton>
-//           )}
-//         </Box>
-
-//         <Divider sx={{ bgcolor: "#444" }} />
-
-//         {/* Navigation Links */}
-//         <List sx={{ flexGrow: 1 }}>
-//           {ServiceProviderNavLinks.map((link) => (
-//             <ListItemButton
-//               key={link.path}
-//               component={Link}
-//               to={link.path}
-//               sx={{
-//                 color: isActive(link.path) ? "#fff" : "#bbb",
-//                 bgcolor: isActive(link.path) ? "#1976D2" : "transparent",
-//                 "&:hover": {
-//                   bgcolor: "gray", // Turns blue on hover
-//                   color: "#fff",
-//                   boxShadow: "0px 0px 8px rgba(32, 169, 248, 0.2)",
-//                 },
-//                 borderRadius: 2,
-//                 mb: 1,
-//                 transition: "all 0.3s ease",
-//               }}
-//             >
-//               <ListItemIcon sx={{ color: "inherit" }}>{link.icon}</ListItemIcon>
-//               <ListItemText primary={link.label} />
-//             </ListItemButton>
-//           ))}
-//         </List>
-
-//         <Divider sx={{ bgcolor: "#444" }} />
-
-//         {/* Logout Button Fixed at Bottom */}
-//         <Box sx={{ p: 2 }}>
-//           <ListItemButton
-//             onClick={handleLogout}
-//             sx={{
-//               color: "#bbb",
-//               "&:hover": { bgcolor: "#d32f2f", color: "#fff" },
-//               transition: "all 0.3s ease",
-//               borderRadius: 2,
-//             }}
-//           >
-//             <ListItemIcon sx={{ color: "inherit" }}>
-//               <Logout />
-//             </ListItemIcon>
-//             <ListItemText primary="Logout" />
-//           </ListItemButton>
-//         </Box>
-//       </SidebarContainer>
-
-//       {/* Main Content */}
-//       <Box component="main" sx={{ flexGrow: 1, p: 3, ml: isMobile ? 0 : drawerWidth, mt: isMobile ? 8 : 0 }}>
-//         <Outlet />
-//       </Box>
-//     </Box>
-//   );
-// };
-
-// export default AdminSidebar;

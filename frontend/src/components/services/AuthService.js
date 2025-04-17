@@ -2,8 +2,9 @@
  * Authentication service for handling user registration, login, and session management
  */
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
-const API_URL = 'http://localhost:4000';
+const API_URL = 'http://localhost:4000/api';
 
 // Create axios instance with default config
 const api = axios.create({
@@ -13,138 +14,150 @@ const api = axios.create({
   },
 });
 
-// Add a request interceptor
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
-
-// Add a response interceptor
+// Add response interceptor for handling errors
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      logout();
+      // Clear token and user data on unauthorized
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      // Don't redirect here, let the components handle navigation
     }
     return Promise.reject(error);
   }
 );
 
-const AuthService = {
-  async login(credentials) {
-    try {
-      const response = await axios.post('/user/login', credentials);
-      if (response.data.token) {
-        localStorage.setItem('token', response.data.token);
-        localStorage.setItem('user', JSON.stringify(response.data.user));
-      }
-      return response.data;
-    } catch (error) {
-      throw new Error(error.response?.data?.message || 'Login failed');
+class AuthService {
+  // Set auth token
+  static setToken(token) {
+    if (token) {
+      localStorage.setItem('token', token);
+      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    } else {
+      localStorage.removeItem('token');
+      delete api.defaults.headers.common['Authorization'];
     }
-  },
+  }
 
-  async register(userData) {
-    try {
-      const response = await api.post('/user', userData);
-      if (response.data.token) {
-        localStorage.setItem('token', response.data.token);
-        localStorage.setItem('user', JSON.stringify(response.data.user));
-      }
-      return response.data;
-    } catch (error) {
-      throw new Error(error.response?.data?.message || 'Registration failed');
-    }
-  },
-
-  logout() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    window.location.href = '/login';
-  },
-
-  getCurrentUser() {
-    const userStr = localStorage.getItem('user');
-    if (userStr) {
-      return JSON.parse(userStr);
-    }
-    return null;
-  },
-
-  isAuthenticated() {
-    const token = localStorage.getItem('token');
-    return !!token;
-  },
-
-  async getCurrentUserFromServer() {
-    try {
-      const response = await get('/me');
-      return response.data;
-    } catch (error) {
-      throw new Error(error.response?.data?.message || 'Failed to get user data');
-    }
-  },
-
-  getToken: () => {
+  // Get auth token
+  static getToken() {
     return localStorage.getItem('token');
-  },
+  }
 
-  updateProfile: async (userData) => {
+  // Register new user
+  static async register(userData) {
     try {
-      const response = await api.put('/user/profile', userData);
+      const response = await api.post('/auth/register', userData);
+      if (response.data.token) {
+        this.setToken(response.data.token);
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+      }
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || { message: 'Registration failed' };
+    }
+  }
+
+  // Login user
+  static async login(credentials) {
+    try {
+      const response = await api.post('/user/login', credentials);
+      if (response.data.token) {
+        this.setToken(response.data.token);
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+      }
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || { message: 'Login failed' };
+    }
+  }
+
+  // Logout user
+  static logout() {
+    this.setToken(null);
+    localStorage.removeItem('user');
+    // Return true to indicate successful logout
+    return true;
+  }
+
+  // Get current user
+  static async getCurrentUser() {
+    try {
+      const token = this.getToken();
+      if (!token) return null;
+
+      const response = await api.get('/auth/me');
+      return response.data;
+    } catch (error) {
+      // Don't logout here, let the components handle it
+      return null;
+    }
+  }
+
+  // Update user profile
+  static async updateProfile(userData) {
+    try {
+      const response = await api.put('/auth/profile', userData);
       localStorage.setItem('user', JSON.stringify(response.data));
       return response.data;
     } catch (error) {
-      if (error.response?.data?.message) {
-        throw new Error(error.response.data.message);
-      }
-      throw new Error('Profile update failed. Please try again.');
-    }
-  },
-
-  // changePassword: async (currentPassword, newPassword) => {
-  //   try {
-  //     await api.post('/user/resetpassword', {
-  //       currentPassword,
-  //       newPassword,
-  //     });
-  //   } catch (error) {
-  //     if (error.response?.data?.message) {
-  //       throw new Error(error.response.data.message);
-  //     }
-  //     throw new Error('Password change failed. Please try again.');
-  //   }
-  // },
-
-  forgotPassword: async (email) => {
-    try {
-      await api.post('/user/forgotpassword', { email });
-    } catch (error) {
-      if (error.response?.data?.message) {
-        throw new Error(error.response.data.message);
-      }
-      throw new Error('Password reset request failed. Please try again.');
-    }
-  },
-
-  resetPassword: async (token, newPassword) => {
-    try {
-      await api.post('/user/resetpassword', { token, newPassword });
-    } catch (error) {
-      if (error.response?.data?.message) {
-        throw new Error(error.response.data.message);
-      }
-      throw new Error('Password reset failed. Please try again.');
+      throw error.response?.data || { message: 'Profile update failed' };
     }
   }
-};
+
+  // Change password
+  static async changePassword(passwordData) {
+    try {
+      const response = await api.put('/auth/change-password', passwordData);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || { message: 'Password change failed' };
+    }
+  }
+
+  // Request password reset
+  static async requestPasswordReset(email) {
+    try {
+      const response = await api.post('/auth/forgot-password', { email });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || { message: 'Password reset request failed' };
+    }
+  }
+
+  // Reset password
+  static async resetPassword(token, newPassword) {
+    try {
+      const response = await api.post('/auth/reset-password', {
+        token,
+        newPassword,
+      });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || { message: 'Password reset failed' };
+    }
+  }
+
+  // Verify email
+  static async verifyEmail(token) {
+    try {
+      const response = await api.post('/auth/verify-email', { token });
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || { message: 'Email verification failed' };
+    }
+  }
+
+  // Resend verification email
+  static async resendVerificationEmail() {
+    try {
+      const response = await api.post('/auth/resend-verification');
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || { message: 'Failed to resend verification email' };
+    }
+  }
+}
 
 export default AuthService; 

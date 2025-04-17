@@ -130,7 +130,7 @@ const Home = () => {
                 <Button 
                   size="small" 
                   color="primary" 
-                  onClick={() => navigate('/user/booking')}
+                  onClick={() => navigate('/user/book')}
                   sx={{ 
                     fontWeight: 500,
                     textTransform: 'none',

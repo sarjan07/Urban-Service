@@ -56,7 +56,7 @@ import About from "./components/pages/About";
 import Term from "./components/pages/Term";
 import { LogOut } from "./components/common/LogOut";
 import ServiceProvider from "./components/service_provider/ServiceProvider";
-import { ViewUser } from "./components/admin/ViewUser";
+import ViewUser  from "./components/admin/ViewUser";
 import UserPage from "./components/user/UserPage";
 import EasyBooking from "./components/user/EasyBooking";
 import { AddUser } from "./components/admin/AddUser";
@@ -68,6 +68,9 @@ import ServiceBooking from "./components/user/Menu/ServiceBooking";
 import AddCategory from "./components/admin/Category";
 import AddSubCategory from "./components/admin/SubCategory";
 import ManageCat from "./components/admin/ManageCat";
+import Dashboard from "./components/admin/Dashboard";
+import AddAdmin from "./components/admin/AddAdmin";
+import AddBooking from "./components/admin/AddBooking";
 
 // Create contexts
 export const AuthContext = createContext();
@@ -76,13 +79,13 @@ export const NotificationContext = createContext();
 // Layout component to handle conditional navbar rendering
 const Layout = ({ children }) => {
   const location = useLocation();
-  const isAuthPage =
-    location.pathname === "/login" || location.pathname === "/signup";
-  axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL;
+  const isAuthPage = location.pathname === "/login" || location.pathname === "/signup";
+  const isAdminPage = location.pathname.startsWith("/admin");
+  axios.defaults.baseURL = "http://localhost:4000/api";
   
   return (
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-      {!isAuthPage && <Navbar />}
+      {!isAuthPage && !isAdminPage && <Navbar />}
       <Box
         component="main"
         sx={{
@@ -95,17 +98,22 @@ const Layout = ({ children }) => {
             minHeight: "100vh",
             background: "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",
           }),
+          ...(isAdminPage && {
+            display: "flex",
+            minHeight: "100vh",
+            background: "#f5f7fa",
+          }),
         }}
-        >
+      >
         {children}
       </Box>
-      {!isAuthPage && <Footer />}
+      {!isAuthPage && !isAdminPage && <Footer />}
     </Box>
   );
 };
 
 function App() { 
-  axios.defaults.baseURL = "https://localhost:4000"
+  axios.defaults.baseURL = "http://localhost:4000/api"
 
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -220,10 +228,11 @@ function App() {
                     <Route path="profile" element={<Profile />} />
                     <Route path="settings" element={<Settings />} />
                     <Route path="booking" element={<EasyBooking/>}/>
+                    <Route path="book" element={<ServiceBooking/>}/>
                       <Route path="menu">
                         <Route path="history" element={<BookingHistory/>}/>
                         <Route path="payhistory" element={<PayHistory/>}/>
-                        <Route path="serbook" element={<ServiceBooking/>}/>
+                        {/* <Route path="serbook" element={<ServiceBooking/>}/> */}
                       </Route>
                     </Route>
 
@@ -249,6 +258,10 @@ function App() {
                       <Route path="category" element={<AddCategory/>} />
                       <Route path="subcategory" element={<AddSubCategory/>}/>
                       <Route path="managecat" element={<ManageCat/>}></Route>
+                      <Route path="dashboard" element={<Dashboard/>}/>
+                      <Route path="addadmin" element={<AddAdmin/>}/>
+                      <Route path="addbooking" element={<AddBooking/>}/>
+                    <Route path="settings"  element={<Settings />} />
                     </Route>
 
                     <Route path="/use" element={<UserPage/>}>
