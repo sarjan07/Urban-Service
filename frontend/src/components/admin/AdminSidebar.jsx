@@ -146,12 +146,12 @@ const AdminSidebar = () => {
           icon: <GroupIcon />,
           path: '/admin/edituser',
         },
-        {
-          text: 'Add Admin',
-          icon: <AdminIcon />,
-          path: '/admin/addadmin',
-        },
       ],
+    },
+    {
+      text: 'Add Service Provider',
+      icon: <AdminIcon />,
+      path: '/admin/addserviceprovider',
     },
     {
       text: 'Settings',

@@ -29,7 +29,7 @@ import {
 } from '@mui/icons-material';
 import { toast } from 'react-toastify';
 
-const AddAdmin = () => {
+const AddServiceProvider = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -174,7 +174,7 @@ const AddAdmin = () => {
                 WebkitTextFillColor: 'transparent',
               }}
             >
-              Add New Admin
+              Add New Service Provider
             </Typography>
           </Box>
         </Box>
@@ -361,7 +361,7 @@ const AddAdmin = () => {
                 boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
               }}
             >
-              {loading ? <CircularProgress size={24} /> : 'Add Admin'}
+              {loading ? <CircularProgress size={24} /> : 'Add Service Provider'}
             </Button>
           </Box>
         </Box>
@@ -370,4 +370,4 @@ const AddAdmin = () => {
   );
 };
 
-export default AddAdmin; 
+export default AddServiceProvider; 

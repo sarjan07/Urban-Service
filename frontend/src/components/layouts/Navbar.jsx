@@ -38,20 +38,27 @@ function Navbar() {
   const location = useLocation();
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(AuthService.isAuthenticated());
-  const [currentUser, setCurrentUser] = useState(AuthService.getCurrentUser());
+  const [isAuthenticated, setIsAuthenticated] = useState(AuthService.getToken() ? true : false);
+  const [currentUser, setCurrentUser] = useState(null);
   const [openLogoutDialog, setOpenLogoutDialog] = useState(false);
 
-  // logoutHnadler();
-  // {
-  //   localStorage.Clear();
-  //   navigate("/login")
-  // }
   // Re-check authentication state when navigating
   useEffect(() => {
-    const checkAuth = () => {
-      setIsAuthenticated(AuthService.isAuthenticated());
-      setCurrentUser(AuthService.getCurrentUser());
+    const checkAuth = async () => {
+      const token = AuthService.getToken();
+      setIsAuthenticated(!!token);
+      
+      if (token) {
+        try {
+          const user = await AuthService.getCurrentUser();
+          setCurrentUser(user);
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+          setCurrentUser(null);
+        }
+      } else {
+        setCurrentUser(null);
+      }
     };
 
     checkAuth();
@@ -72,7 +79,12 @@ function Navbar() {
   };
 
   const getUserInitial = () => {
-    return currentUser?.email ? currentUser.email.charAt(0).toUpperCase() : "?";
+    if (currentUser?.email) {
+      return currentUser.email.charAt(0).toUpperCase();
+    } else if (currentUser?.name) {
+      return currentUser.name.charAt(0).toUpperCase();
+    }
+    return "?";
   };
 
   return (
@@ -87,7 +99,6 @@ function Navbar() {
             <HandymanIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1, color: "#1a73e8" }} />
             <Typography
               variant="h6"
-              // src=
               component={RouterLink}
               to="/"
               sx={{

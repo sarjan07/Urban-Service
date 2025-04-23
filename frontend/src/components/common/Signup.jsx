@@ -13,7 +13,7 @@ import {
   Grid,
   useTheme,
 } from '@mui/material';
-import { AuthContext } from '../../App';
+import { useAuth } from '../../context/AuthContext';
 // import AuthService from '../services/AuthService';
 import { toast, ToastContainer } from 'react-toastify';
 // import 'react-toastify/dist/ReactToastify.css';
@@ -29,7 +29,7 @@ const Signup=()=> {
     });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { register } = useContext(AuthContext);
+  const { login } = useAuth();
   const navigate = useNavigate();
   const theme = useTheme();
 
@@ -86,7 +86,7 @@ const Signup=()=> {
       const { confirmPassword, ...registrationData } = formData;
      
       // Call the register function from authService
-      await register(registrationData);
+      await login(registrationData);
       
       toast.success('Registration successful!', {
         position: "top-right",

@@ -1,14 +1,14 @@
 import { useState, useEffect, useContext } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../../App";
+import { useAuth } from "../../context/AuthContext";
 import axios from "axios";
 // import { getallServices } from "../../../../backend/src/controllers/FormController";
 // import axios from "axios";
 
 const AddService = () => {
   const navigate = useNavigate();
-  const { user } = useContext(AuthContext);
+  const { user } = useAuth();
 
   const {
     register,

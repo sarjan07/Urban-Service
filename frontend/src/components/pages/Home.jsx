@@ -12,10 +12,10 @@ import {
   Alert,
   useTheme,
 } from '@mui/material';
-import { AuthContext } from '../../App';
+import { useAuth } from '../../context/AuthContext';
 
 const Home = () => {
-  const { user, isAuthenticated } = useContext(AuthContext);
+  const { user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const theme = useTheme();
 

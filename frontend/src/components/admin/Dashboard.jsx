@@ -1,28 +1,68 @@
 import { useState, useEffect } from 'react';
 import { LineChart, Line, PieChart, Pie, Cell, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import { Users, UserCheck, UserMinus, Activity } from 'lucide-react';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
 // Dashboard component that displays real-time user data
-const Dashboard=()=> {
-  // State for tracking user statistics with more stable data management
+const Dashboard = () => {
   const [userData, setUserData] = useState({
-    totalUsers: 1000, // Start with baseline values
-    activeUsers: 800,
-    inactiveUsers: 200,
-    historyData: Array.from({length: 7}, (_, i) => ({ // Initialize with 7 days of data
-      date: `Apr ${new Date().getDate() - (6-i)}`,
-      users: 1000,
-      active: 800,
-      inactive: 200
-    })),
+    totalUsers: 0,
+    activeUsers: 0,
+    inactiveUsers: 0,
+    historyData: [],
     error: null,
-    loading: false, // Start with loading false since we have initial data
-    lastUpdate: new Date(), // Track last update time
-    changeRate: { // Control rates of change
-      total: 0.02, // 2% max change
-      active: 0.015 // 1.5% max change
-    }
+    loading: true,
+    lastUpdate: new Date()
   });
+
+  // Fetch user data from backend
+  const getAllUserData = async () => {
+    try {
+      const response = await axios.get('/users');
+      const users = response.data.data;
+      
+      const totalUsers = users.length;
+
+      // Create history data point
+      const today = new Date();
+      const dateStr = `Apr ${today.getDate()}`;
+      const newHistoryPoint = {
+        date: dateStr,
+        users: totalUsers
+      };
+
+      // Update state with real data
+      setUserData(prevData => ({
+        totalUsers,
+        activeUsers,
+        inactiveUsers,
+        historyData: [...prevData.historyData, newHistoryPoint].slice(-7), // Keep last 7 days
+        error: null,
+        loading: false,
+        lastUpdate: new Date()
+      }));
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+      setUserData(prevData => ({
+        ...prevData,
+        error: 'Failed to fetch user data',
+        loading: false
+      }));
+      toast.error('Failed to fetch user data');
+    }
+  };
+
+  // Initial data fetch
+  useEffect(() => {
+    getAllUserData();
+  }, []);
+
+  // Refresh data every 30 seconds
+  useEffect(() => {
+    const interval = setInterval(getAllUserData, 30000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Pie chart data
   const pieData = [
@@ -30,46 +70,24 @@ const Dashboard=()=> {
     { name: 'Inactive Users', value: userData.inactiveUsers, color: '#f87171' },
   ];
 
-  // Simulate real-time data updates
-  useEffect(() => {
-    const interval = setInterval(() => {
-      // Generate random changes to simulate real-time data
-      const totalChange = Math.floor(Math.random() * 10) - 3; // -3 to +6
-      const activeChange = Math.floor(Math.random() * 8) - 2; // -2 to +5
-      
-      setUserData(prevData => {
-        const newTotal = Math.max(1000, prevData.totalUsers + totalChange);
-        const newActive = Math.min(newTotal, Math.max(600, prevData.activeUsers + activeChange));
-        const newInactive = newTotal - newActive;
-        
-        // Add new data point for history
-        const today = new Date();
-        const dateStr = `Apr ${today.getDate()}`;
-        const newHistoryPoint = { 
-          date: dateStr, 
-          users: newTotal, 
-          active: newActive, 
-          inactive: newInactive
-        };
-        
-        // Keep only last 7 data points
-        const newHistory = [...prevData.historyData, newHistoryPoint].slice(-7);
-        
-        return {
-          totalUsers: newTotal,
-          activeUsers: newActive,
-          inactiveUsers: newInactive,
-          historyData: newHistory
-        };
-      });
-    }, 3000); // Update every 3 seconds
-    
-    return () => clearInterval(interval);
-  }, []);
+  if (userData.loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-gray-50 p-6 rounded-lg shadow-lg max-w-6xl mx-auto">
       <h1 className="text-2xl font-bold mb-6 text-center text-gray-800">User Analytics Dashboard</h1>
+      
+      {userData.error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+          {/* <strong className="font-bold">Error!</strong>
+          <span className="block sm:inline"> {userData.error}</span> */}
+        </div>
+      )}
       
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
@@ -160,8 +178,8 @@ const Dashboard=()=> {
       </div>
       
       <div className="mt-6 text-center text-sm text-gray-500">
-        <p>Last updated: {new Date().toLocaleTimeString()}</p>
-        <p className="text-xs mt-1">Data refreshes every 3 seconds</p>
+        <p>Last updated: {userData.lastUpdate.toLocaleTimeString()}</p>
+        <p className="text-xs mt-1">Data refreshes every 30 seconds</p>
       </div>
     </div>
   );

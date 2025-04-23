@@ -5,7 +5,7 @@ import {
   Navigate,
   useLocation,
 } from "react-router-dom";
-import { useState, useEffect, createContext } from "react";
+import { useState, useEffect } from "react";
 import { ThemeProvider, CssBaseline } from "@mui/material";
 import { Snackbar, Alert } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers";
@@ -69,12 +69,10 @@ import AddCategory from "./components/admin/Category";
 import AddSubCategory from "./components/admin/SubCategory";
 import ManageCat from "./components/admin/ManageCat";
 import Dashboard from "./components/admin/Dashboard";
-import AddAdmin from "./components/admin/AddAdmin";
+// import AddAdmin from "./components/admin/AddAdmin";
 import AddBooking from "./components/admin/AddBooking";
-
-// Create contexts
-export const AuthContext = createContext();
-export const NotificationContext = createContext();
+import AddServiceProvider from "./components/admin/AddServiceProvider";
+import ManageServiceProvider from "./components/admin/ManageServiceProvider";
 
 // Layout component to handle conditional navbar rendering
 const Layout = ({ children }) => {
@@ -115,176 +113,98 @@ const Layout = ({ children }) => {
 function App() { 
   axios.defaults.baseURL = "http://localhost:4000/api"
 
-  const [user, setUser] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  // const [notification, setNotification] = useState({
-  //   open: false,
-  //   message: "",
-  //   severity: "success",
-  // });
-
-  useEffect(() => {
-    const checkAuth = async () => {
-      const currentUser = await AuthService.getCurrentUser();
-      if (currentUser) {
-        setUser(currentUser);
-        setIsAuthenticated(true);
-      }
-    };
-    checkAuth();
-  }, []);
-  
-  // Show notification
-  // const showNotification = (message, severity = "success") => {
-  //   setNotification({
-  //     open: true,
-  //     message,
-  //     severity,
-  //   });
-  // };
-
-  // Close notification
-  // const closeNotification = () => {
-  //   setNotification({
-  //     ...notification,
-  //     open: false,
-  //   });
-  // };
-
-  // Auth context value
-  const authContextValue = {
-    user,
-    isAuthenticated,
-    login: (userData) => {
-      setUser(userData);
-      setIsAuthenticated(true);
-      showNotification("Login successful!");
-    },
-    logout: () => {
-      AuthService.logout();
-      setUser(null);
-      setIsAuthenticated(false);
-      showNotification("Logged out successfully!");
-    },
-    register: async (userData) => {
-      try {
-        const user = await AuthService.register(userData);
-        setUser(user);
-        setIsAuthenticated(true);
-        emailService.sendWelcomeEmail(user.email, user.firstName);
-        showNotification("Registration successful!");
-        return user;
-      } catch (error) {
-        showNotification(error.message || "Registration failed", "error");
-        throw error;
-      }
-    },
-  };
-
-  // Notification context value
-  // const notificationContextValue = {
-  //   showNotification,
-  //   closeNotification,
-  // };
-
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <AuthProvider>
-        <AuthContext.Provider value={authContextValue}>
-          {/* <NotificationContext.Provider value={notificationContextValue}> */}
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
+        <LocalizationProvider dateAdapter={AdapterDateFns}>
+          <Layout>
+            <Routes>
+              {/* Public Routes */}
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
+              {/* <Route path='/logout' element={<LogOut/>}></Route> */}
+
+              {/* Protected Service Provider Routes */}
+              {/* <Route path="/home" element={<Home />}> */}
+                <Route path="/service-provider" element={<ServiceProvider/>}>
+                  <Route path="services" element={<Services />} >
+                  </Route>
+                </Route>
+
+              {/* </Route> */}
+              {/* <Route path="/user" element={<Home/>}>
+              </Route> */}
+
+              {/* Protected Payment Routes */}
+              <Route path="/select-services">
+                <Route path="payment" element={<Payments />} />
+                <Route path="history" element={<PaymentHistory />} />
+              </Route>
+
+              {/* Protected User Routes */}
+              <Route path="/user" element={<Home/>}>
+              <Route path="manage" element={<ManageServices />} />
+              <Route path="profile" element={<Profile />} />
+              <Route path="settings" element={<Settings />} />
+              <Route path="booking" element={<EasyBooking/>}/>
+              <Route path="book" element={<ServiceBooking/>}/>
+                <Route path="menu">
+                  <Route path="history" element={<BookingHistory/>}/>
+                  <Route path="payhistory" element={<PayHistory/>}/>
+                  {/* <Route path="serbook" element={<ServiceBooking/>}/> */}
+                </Route>
+              </Route>
+
+              {/* Protected dashboard route */}
+              <Route path="/dashboard" element={<Home1 />} />
+
+              {/* 404 Route */}
+              <Route path="*" element={<NotFound />} />
+              <Route path="/faq" element={<Faq/>}></Route>
+              <Route path="/privacy" element={<Privacy/>}></Route>
+              <Route path="/contact" element={<Contact/>}></Route>
+              <Route path="/about" element={<About/>}></Route>
+              <Route path="/terms" element={<Term/>}></Route>
              
-                <Layout>
-                  <Routes>
-                    {/* Public Routes */}
-                    <Route path="/" element={<Home />} />
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/signup" element={<Signup />} />
-                    <Route path="/forgot-password" element={<ForgotPassword />} />
-                    <Route path="/reset-password" element={<ResetPassword />} />
-                    {/* <Route path='/logout' element={<LogOut/>}></Route> */}
 
-                    {/* Protected Service Provider Routes */}
-                    {/* <Route path="/home" element={<Home />}> */}
-                      <Route path="/service-provider" element={<ServiceProvider/>}>
-                        <Route path="services" element={<Services />} >
-                        </Route>
-                      </Route>
+              {/* Admin Sidebar & Navbar */}
+              <Route path="/admin" element={<AdminSidebar/>}>
+                <Route path="add" element={<AddService />} />
+                <Route path="adduser" element={<AddUser/>}></Route>
+                <Route path="edituser" element={<EditUser/>}></Route>
+                <Route path="viewuser" element={<ViewUser/>}></Route>
+                <Route path="profile" element={<Profile/>}></Route>
+                <Route path="category" element={<AddCategory/>} />
+                <Route path="subcategory" element={<AddSubCategory/>}/>
+                <Route path="managecat" element={<ManageCat/>}></Route>
+                <Route path="dashboard" element={<Dashboard/>}/>
+                {/* <Route path="addadmin" element={<AddAdmin/>}/> */}
+                <Route path="addbooking" element={<AddBooking/>}/>
+                <Route path="addserviceprovider" element={<AddServiceProvider/>}/>
+                <Route path="manageserviceprovider" element={<ManageServiceProvider/>}/>
+              <Route path="settings"  element={<Settings />} />
+              </Route>
 
-                    {/* </Route> */}
-                    {/* <Route path="/user" element={<Home/>}>
-                    </Route> */}
-
-                    {/* Protected Payment Routes */}
-                    <Route path="/select-services">
-                      <Route path="payment" element={<Payments />} />
-                      <Route path="history" element={<PaymentHistory />} />
-                    </Route>
-
-                    {/* Protected User Routes */}
-                    <Route path="/user" element={<Home/>}>
-                    <Route path="manage" element={<ManageServices />} />
-                    <Route path="profile" element={<Profile />} />
-                    <Route path="settings" element={<Settings />} />
-                    <Route path="booking" element={<EasyBooking/>}/>
-                    <Route path="book" element={<ServiceBooking/>}/>
-                      <Route path="menu">
-                        <Route path="history" element={<BookingHistory/>}/>
-                        <Route path="payhistory" element={<PayHistory/>}/>
-                        {/* <Route path="serbook" element={<ServiceBooking/>}/> */}
-                      </Route>
-                    </Route>
-
-                    {/* Protected dashboard route */}
-                    <Route path="/dashboard" element={<Home1 />} />
-
-                    {/* 404 Route */}
-                    <Route path="*" element={<NotFound />} />
-                    <Route path="/faq" element={<Faq/>}></Route>
-                    <Route path="/privacy" element={<Privacy/>}></Route>
-                    <Route path="/contact" element={<Contact/>}></Route>
-                    <Route path="/about" element={<About/>}></Route>
-                    <Route path="/terms" element={<Term/>}></Route>
-                   
-
-                    {/* Admin Sidebar & Navbar */}
-                    <Route path="/admin" element={<AdminSidebar/>}>
-                      <Route path="add" element={<AddService />} />
-                      <Route path="adduser" element={<AddUser/>}></Route>
-                      <Route path="edituser" element={<EditUser/>}></Route>
-                      <Route path="viewuser" element={<ViewUser/>}></Route>
-                      <Route path="profile" element={<Profile/>}></Route>
-                      <Route path="category" element={<AddCategory/>} />
-                      <Route path="subcategory" element={<AddSubCategory/>}/>
-                      <Route path="managecat" element={<ManageCat/>}></Route>
-                      <Route path="dashboard" element={<Dashboard/>}/>
-                      <Route path="addadmin" element={<AddAdmin/>}/>
-                      <Route path="addbooking" element={<AddBooking/>}/>
-                    <Route path="settings"  element={<Settings />} />
-                    </Route>
-
-                    <Route path="/use" element={<UserPage/>}>
-                    
-                    </Route>
-                  </Routes>
-                </Layout>
+              <Route path="/use" element={<UserPage/>}>
               
-              <ToastContainer />
-              <Snackbar autoHideDuration={6000} anchorOrigin={{ vertical: "bottom", horizontal: "right" }}>
-                <Alert
-                  // onClose={closeNotification}
-                  // severity={notification.severity}
-                  sx={{ width: "100%" }}
-                >
-                  {/* {notification.message} */}
-                </Alert>
-              </Snackbar>
-            </LocalizationProvider>
-          {/* </NotificationContext.Provider> */}
-        </AuthContext.Provider>
-      </AuthProvider>
-    </ThemeProvider>
+              </Route>
+            </Routes>
+          </Layout>
+        
+        <ToastContainer />
+        <Snackbar autoHideDuration={6000} anchorOrigin={{ vertical: "bottom", horizontal: "right" }}>
+          <Alert
+            sx={{ width: "100%" }}
+          >
+          </Alert>
+        </Snackbar>
+      </LocalizationProvider>
+    </AuthProvider>
+  </ThemeProvider>
   );
 }
 
